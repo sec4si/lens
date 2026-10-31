@@ -1,8 +1,73 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#090c09"><meta name="description" content="Lens, part of the sec4si AI security research ecosystem. Project content is coming soon."><meta property="og:title" content="Lens — sec4.si"><meta property="og:type" content="website"><meta property="og:url" content="https://lens.sec4.si/"><link rel="canonical" href="https://lens.sec4.si/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/styles.css"><title>Lens — sec4.si</title></head>
-<body><a class="skip" href="#main">Skip to content</a><div class="page">
-<header><a class="brand" href="https://sec4.si/" aria-label="sec4.si home"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 5v22h7M28 5v22h-7"/><path class="slash" d="m19 6-6 20"/></svg><span>sec4<span class="dot">.</span>si</span></a><span class="project-breadcrumb mono">/ lens</span><nav aria-label="Project navigation"><a href="https://benchmark.sec4.si/">Benchmark</a><a href="https://lens.sec4.si/" aria-current="page">Lens</a><a class="repo-link" href="https://github.com/sec4si/lens">GitHub <svg class="arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></a></nav></header>
-<main id="main"><div class="field-caption mono"><span class="status-dot"></span> SEC4SI / RESEARCH ECOSYSTEM / 02</div><div class="field" aria-hidden="true"><div class="field-lines" id="field-lines"></div><div class="scan"></div><span class="field-word one">LENS</span><span class="field-word two">LLM / INFERENCE / AGENT</span><span class="field-word three">OBSERVE</span><span class="field-word four">SECURITY FOR SI</span></div>
-<div class="hero-copy"><div class="eyebrow mono"><span class="cross" aria-hidden="true"></span> AI SECURITY RESEARCH / 02</div><h1><span><span>Lens </span></span><span><span class="accent">for SI.</span></span></h1><p class="description">A new space in the sec4si research ecosystem.<br>Project content is coming soon.</p><p class="chinese" lang="zh-CN">探索智能系统的安全边界。项目内容即将上线。</p><div class="actions"><a class="primary" href="https://github.com/sec4si/lens">Explore repository <svg class="arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></a><a class="secondary" href="https://sec4.si/">Visit sec4.si <span aria-hidden="true">↗</span></a></div></div>
-<aside class="note" aria-label="Project status"><div class="note-label mono"><span class="status-dot"></span> PROJECT IN PROGRESS <span style="margin-left:auto">[ LENS ]</span></div><h2>This space is taking shape.</h2><p>PART OF SEC4SI.<br>OPEN QUESTIONS. REAL SYSTEMS.</p></aside></main>
-<footer class="mono"><a class="footer-brand" href="https://sec4.si/">SEC4.SI / SECURITY FOR SI</a><span class="research-labels">LLM / INFERENCE / AGENT / ECOSYSTEM</span><div class="footer-links"><a href="https://benchmark.sec4.si/">Benchmark ↗</a><span>© 2026 SEC4SI</span></div><a class="site-address" href="https://lens.sec4.si/">lens.sec4.si</a></footer></div><script src="/site.js" defer></script></body></html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<script>if (/^zh\b/i.test(navigator.language || '')) document.documentElement.lang = 'zh-CN'</script>
+<meta name="theme-color" content="#090c09"><meta name="description" content="Lens is the sec4si interpretability research site: what interpretability is, why it matters, and where the field stands."><meta property="og:title" content="Lens — sec4.si"><meta property="og:type" content="website"><meta property="og:url" content="https://lens.sec4.si/"><link rel="canonical" href="https://lens.sec4.si/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/styles.css"><title>Lens — sec4.si</title></head>
+<body><a class="skip" href="#main"><span lang="en">Skip to content</span><span lang="zh-CN">跳到正文</span></a>
+<header class="site-header"><a class="brand" href="https://sec4.si/" aria-label="sec4.si home"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 5v22h7M28 5v22h-7"/><path class="slash" d="m19 6-6 20"/></svg><span>sec4<span class="dot">.</span>si</span></a><span class="project-breadcrumb mono">/ lens</span><nav aria-label="Project navigation"><a href="https://benchmark.sec4.si/">Benchmark</a><a href="https://lens.sec4.si/" aria-current="page">Lens</a><a class="repo-link" href="https://github.com/sec4si/lens">GitHub <svg class="arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></a></nav></header>
+
+<main id="main">
+<section class="prologue">
+  <div class="prologue-copy">
+    <div class="eyebrow mono"><span class="cross" aria-hidden="true"></span> LENS / INTERPRETABILITY RESEARCH</div>
+    <h1><span lang="en">See how<br><span class="accent">models think.</span></span><span lang="zh-CN">看见模型<br><span class="accent">如何思考。</span></span></h1>
+    <p class="lede"><span lang="en">Large language models answer well, but no one can yet read the reasoning inside them. Interpretability is the work of building lenses that can.</span><span lang="zh-CN">大模型很会回答问题，但还没有人能读懂它们内部的推理。可解释性研究，就是为它们打造能看清内部的镜头。</span></p>
+  </div>
+  <figure class="specimen" id="specimen" tabindex="0">
+    <figcaption class="specimen-prompt mono"><span class="prompt-tag"><span lang="en">PROMPT</span><span lang="zh-CN">提问</span></span><span lang="en">What is the capital of the state Dallas is in?</span><span lang="zh-CN">达拉斯所在州的首府是哪里？</span></figcaption>
+    <div class="specimen-text">
+      <p class="layer surface"></p>
+      <p class="layer depth" aria-hidden="true"></p>
+      <span class="lens-ring" aria-hidden="true"></span>
+    </div>
+    <div class="specimen-foot mono"><span lang="en">Move the lens over the answer to see the features beneath. Schematic.</span><span lang="zh-CN">把镜头移到回答上，看文字之下的特征。示意图。</span></div>
+  </figure>
+  <a class="scroll-cue mono" href="#what"><span lang="en">What is interpretability</span><span lang="zh-CN">什么是可解释性</span> ↓</a>
+</section>
+
+<section class="chapter" id="what" aria-labelledby="what-title">
+  <div class="chapter-head">
+    <span class="chapter-no mono">01</span>
+    <h2 id="what-title"><span lang="en">What is interpretability</span><span lang="zh-CN">什么是可解释性</span></h2>
+  </div>
+  <div class="scrolly">
+    <div class="steps">
+      <article class="step">
+        <span class="step-no mono">1.1</span>
+        <h3><span lang="en">A black box that works.</span><span lang="zh-CN">一个好用的黑箱。</span></h3>
+        <p><span lang="en">Ask a language model for the capital of the state Dallas is in, and it answers Austin. It is right. How it got there stays hidden inside.</span><span lang="zh-CN">问大模型：达拉斯所在州的首府是哪里？它答：奥斯汀。答对了。但它是怎么想到的，藏在里面。</span></p>
+      </article>
+      <article class="step">
+        <span class="step-no mono">1.2</span>
+        <h3><span lang="en">Open it, and there are only numbers.</span><span lang="zh-CN">打开它，只有数字。</span></h3>
+        <p><span lang="en">Unlike ordinary software, no one wrote this logic. Training nudged billions of numbers until the answers came out right. Every one of them is visible, and none of them explains itself.</span><span lang="zh-CN">和普通软件不同，这段逻辑没有人写过。训练不断调整数十亿个数字，直到答案变对。每个数字都看得见，但没有一个会说明自己的含义。</span></p>
+      </article>
+      <article class="step">
+        <span class="step-no mono">1.3</span>
+        <h3><span lang="en">One neuron, many meanings.</span><span lang="zh-CN">一个神经元，许多含义。</span></h3>
+        <p><span lang="en">Single neurons are stranger still: the same one fires for cats, car engines and Python code. A model holds far more concepts than it has neurons, so it packs them on top of each other. This is called superposition.</span><span lang="zh-CN">单个神经元更奇怪：同一个神经元会同时被猫、汽车引擎和 Python 代码激活。模型要表达的概念远多于神经元，只好把它们叠在一起。这叫叠加（superposition）。</span></p>
+        <p class="hint mono"><span lang="en">Hover or tap a neuron.</span><span lang="zh-CN">悬停或点按一个神经元。</span></p>
+      </article>
+      <article class="step">
+        <span class="step-no mono">1.4</span>
+        <h3><span lang="en">Untangle it into features.</span><span lang="zh-CN">拆成特征。</span></h3>
+        <p><span lang="en">Dictionary learning pulls the overlapping signals apart into features: directions that each mean one thing, such as a city, a state, or the idea of a capital.</span><span lang="zh-CN">字典学习把叠在一起的信号拆开，得到一个个特征：每个特征只代表一件事，比如一座城市、一个州，或者“首府”这个概念。</span></p>
+        <p class="hint mono"><span lang="en">Drag the slider.</span><span lang="zh-CN">拖动滑块。</span></p>
+      </article>
+      <article class="step">
+        <span class="step-no mono">1.5</span>
+        <h3><span lang="en">Connect them into circuits.</span><span lang="zh-CN">连成电路。</span></h3>
+        <p><span lang="en">Features pass information to one another. Trace those connections and the computation appears: Dallas leads to Texas, “capital” leads to naming a capital, and together they produce Austin.</span><span lang="zh-CN">特征之间相互传递信息。把这些连接追踪出来，计算过程就浮现了：达拉斯引出得克萨斯，“首府”引出说出一个首府，两者汇合得到奥斯汀。</span></p>
+        <p class="takeaway"><span lang="en">That is interpretability: translating numbers into concepts, and concepts into a process we can read.</span><span lang="zh-CN">这就是可解释性：把数字翻译成概念，再把概念连成我们读得懂的过程。</span></p>
+      </article>
+    </div>
+    <div class="stage" aria-hidden="true">
+      <div class="stage-meta mono"><span class="stage-fig"></span><span lang="en">SCHEMATIC</span><span lang="zh-CN">示意</span></div>
+      <div class="stage-scenes"></div>
+    </div>
+  </div>
+  <p class="chapter-note mono"><span lang="en">All figures in this chapter are schematic. The Dallas example is adapted from Anthropic, <a href="https://transformer-circuits.pub/2025/attribution-graphs/biology.html">“On the Biology of a Large Language Model”</a> (2025).</span><span lang="zh-CN">本章图示均为示意。达拉斯案例改编自 Anthropic <a href="https://transformer-circuits.pub/2025/attribution-graphs/biology.html">《On the Biology of a Large Language Model》</a>（2025）。</span></p>
+</section>
+</main>
+
+<footer class="mono"><a class="footer-brand" href="https://sec4.si/">SEC4.SI / SECURITY FOR SI</a><span class="research-labels">INTERPRETABILITY / FEATURES / CIRCUITS</span><div class="footer-links"><a href="https://benchmark.sec4.si/">Benchmark ↗</a><span>© 2026 SEC4SI</span></div><a class="site-address" href="https://lens.sec4.si/">lens.sec4.si</a></footer>
+<script type="module" src="/js/main.js"></script></body></html>
