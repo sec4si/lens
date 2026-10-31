@@ -2,6 +2,7 @@ import { t, zh, html } from './util.js';
 import { lens } from './lens.js';
 import { blackbox, weights, neurons, untangle, circuit } from './what.js';
 import { grown, shortcuts, says } from './why.js';
+import { hallucinate, steer, audit, discover } from './gains.js';
 
 document.title = t('Lens — Interpretability · sec4.si', 'Lens — 可解释性 · sec4.si');
 lens(document.getElementById('specimen'));
@@ -53,3 +54,4 @@ function scrolly(section, factories) {
 
 scrolly(document.getElementById('what'), [blackbox, weights, neurons, untangle, circuit]);
 scrolly(document.getElementById('why'), [grown, shortcuts, says]);
+scrolly(document.getElementById('gains'), [hallucinate, steer, audit, discover]);

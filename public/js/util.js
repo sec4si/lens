@@ -31,6 +31,33 @@ export function chip(parent, x, y, label, className = '') {
   return g;
 }
 
+// Segmented switch shared by the comparison figures; walks through the views on its own until the reader takes over.
+export function views(scene, labels, onChange) {
+  scene.classList.add('has-bar');
+  const bar = html('div', 'views mono', scene);
+  let current = -1, touched = false, timer = 0;
+  const set = i => {
+    current = i;
+    buttons.forEach((button, j) => button.setAttribute('aria-pressed', i === j));
+    onChange(i);
+  };
+  const buttons = labels.map((label, i) => {
+    const button = html('button', '', bar);
+    button.type = 'button';
+    button.textContent = label;
+    button.addEventListener('click', () => { touched = true; clearInterval(timer); set(i); });
+    return button;
+  });
+  return {
+    enter() {
+      if (touched) return set(current);
+      set(0);
+      timer = setInterval(() => (current < labels.length - 1 ? set(current + 1) : clearInterval(timer)), 2800);
+    },
+    leave() { clearInterval(timer); },
+  };
+}
+
 export function fitCanvas(canvas) {
   const dpr = Math.min(devicePixelRatio || 1, 2);
   const { width, height } = canvas.getBoundingClientRect();

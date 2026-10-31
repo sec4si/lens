@@ -1,31 +1,4 @@
-import { t, zh, reduced, svg, html, chip, random, rise } from './util.js';
-
-// Two-state switch shared by the comparison figures; flips to the second view on its own unless the reader takes over.
-function views(scene, labels, onChange) {
-  scene.classList.add('has-bar');
-  const bar = html('div', 'views mono', scene);
-  let current = -1, touched = false, timer = 0;
-  const set = i => {
-    current = i;
-    buttons.forEach((button, j) => button.setAttribute('aria-pressed', i === j));
-    onChange(i);
-  };
-  const buttons = labels.map((label, i) => {
-    const button = html('button', '', bar);
-    button.type = 'button';
-    button.textContent = label;
-    button.addEventListener('click', () => { touched = true; clearTimeout(timer); set(i); });
-    return button;
-  });
-  return {
-    enter() {
-      if (touched) return set(current);
-      set(0);
-      timer = setTimeout(() => set(1), 2800);
-    },
-    leave() { clearTimeout(timer); },
-  };
-}
+import { t, zh, reduced, svg, chip, random, rise, views } from './util.js';
 
 const CODE = [
   [0, `# ${t('written by a person', '由人编写')}`],

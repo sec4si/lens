@@ -100,6 +100,46 @@
   </div>
   <p class="chapter-note mono"><span lang="en">All figures in this chapter are schematic. The 36 + 59 example is adapted from Anthropic, <a href="https://transformer-circuits.pub/2025/attribution-graphs/biology.html">“On the Biology of a Large Language Model”</a> (2025). The capital-city shortcut is an illustration, not a measured result.</span><span lang="zh-CN">本章图示均为示意。36 + 59 的案例改编自 Anthropic <a href="https://transformer-circuits.pub/2025/attribution-graphs/biology.html">《On the Biology of a Large Language Model》</a>（2025）。首都捷径是示意性的例子，不是实测结果。</span></p>
 </section>
+
+<section class="chapter" id="gains" data-chapter="3" aria-labelledby="gains-title">
+  <div class="chapter-head">
+    <span class="chapter-no mono">03</span>
+    <h2 id="gains-title"><span lang="en">What a breakthrough brings</span><span lang="zh-CN">突破会带来什么</span></h2>
+  </div>
+  <div class="scrolly">
+    <div class="steps">
+      <article class="step">
+        <span class="step-no mono">3.1</span>
+        <h3><span lang="en">Fix what goes wrong.</span><span lang="zh-CN">修好出错的地方。</span></h3>
+        <p><span lang="en">Today, when a model hallucinates, we can only retrain it and hope. Interpretability can find the cause. Researchers traced one kind of hallucination to a single switch: a “known name” feature that turns off the model’s default “I can’t answer”. When it misfires, the model makes things up.</span><span lang="zh-CN">今天模型出现幻觉，我们只能重新训练，然后祈祷。可解释性能找到原因。研究者把一类幻觉追踪到了一个开关上：“熟悉的名字”特征会关掉模型默认的“我答不了”。这个开关一旦误触发，模型就会开始编造。</span></p>
+        <p class="hint mono"><span lang="en">Switch between the cases.</span><span lang="zh-CN">切换不同的情况。</span></p>
+      </article>
+      <article class="step">
+        <span class="step-no mono">3.2</span>
+        <h3><span lang="en">Steer it precisely.</span><span lang="zh-CN">精确地调控它。</span></h3>
+        <p><span lang="en">Instead of coaxing a model with prompts and hoping it listens, we can adjust the feature responsible directly. In 2024, Anthropic turned up a single “Golden Gate Bridge” feature in Claude, and the model began to believe it was the bridge.</span><span lang="zh-CN">不必再靠提示词哄模型、祈祷它听话，我们可以直接调节负责某种行为的特征。2024 年，Anthropic 把 Claude 中的一个“金门大桥”特征调高，模型就开始相信自己是那座桥。</span></p>
+        <p class="hint mono"><span lang="en">Drag the slider.</span><span lang="zh-CN">拖动滑块。</span></p>
+      </article>
+      <article class="step">
+        <span class="step-no mono">3.3</span>
+        <h3><span lang="en">Catch what it hides.</span><span lang="zh-CN">查出它隐藏的东西。</span></h3>
+        <p><span lang="en">A model can be trained, by accident or on purpose, to pursue a goal it never states. In a 2025 blind audit, teams were handed a model with a hidden objective. Teams that could look inside it traced its odd habits, such as putting chocolate in an omelette, back to that objective. The team limited to its outputs did not.</span><span lang="zh-CN">模型可能在无意或有意之间，被训练出一个它从不说出口的目标。2025 年的一次盲审中，几支团队拿到一个藏有隐藏目标的模型。能查看模型内部的团队，从它的怪癖（比如往煎蛋卷里加巧克力）一路追到了这个目标；只能看输出的那支团队没有找到。</span></p>
+        <p class="hint mono"><span lang="en">Switch views.</span><span lang="zh-CN">切换视图。</span></p>
+      </article>
+      <article class="step">
+        <span class="step-no mono">3.4</span>
+        <h3><span lang="en">Learn from it.</span><span lang="zh-CN">向它学习。</span></h3>
+        <p><span lang="en">Models increasingly know things we don’t, and interpretability can turn that knowledge into something people can use. DeepMind extracted chess concepts from AlphaZero that humans had never described, then taught them to four grandmasters, whose answers on test positions improved.</span><span lang="zh-CN">模型越来越多地知道一些我们不知道的东西，可解释性可以把这些知识变成人能用的东西。DeepMind 从 AlphaZero 里提取出人类从未总结过的棋理，教给四位特级大师，他们在测试局面上的表现随之提升。</span></p>
+        <p class="takeaway"><span lang="en">A breakthrough would take us from “it seems to work” to “we know why it works”: able to fix it, steer it, audit it, and learn from it.</span><span lang="zh-CN">突破会让我们从“它好像能用”走到“我们知道它为什么能用”：修得了它，调得了它，查得了它，也学得了它。</span></p>
+      </article>
+    </div>
+    <div class="stage" aria-hidden="true">
+      <div class="stage-meta mono"><span class="stage-fig"></span><span lang="en">SCHEMATIC</span><span lang="zh-CN">示意</span></div>
+      <div class="stage-scenes"></div>
+    </div>
+  </div>
+  <p class="chapter-note mono"><span lang="en">All figures in this chapter are schematic, and the model outputs shown are illustrative. Sources: the hallucination circuit, Anthropic, <a href="https://transformer-circuits.pub/2025/attribution-graphs/biology.html">“On the Biology of a Large Language Model”</a> (2025); Golden Gate Claude, Anthropic, <a href="https://transformer-circuits.pub/2024/scaling-monosemanticity/">“Scaling Monosemanticity”</a> (2024); the blind audit, Anthropic, <a href="https://www.anthropic.com/research/auditing-hidden-objectives">“Auditing language models for hidden objectives”</a> (2025); chess concepts, Schut et al., <a href="https://arxiv.org/abs/2310.16410">“Bridging the Human-AI Knowledge Gap”</a> (2023).</span><span lang="zh-CN">本章图示均为示意，图中的模型输出为示意文本。来源：幻觉电路，Anthropic <a href="https://transformer-circuits.pub/2025/attribution-graphs/biology.html">《On the Biology of a Large Language Model》</a>（2025）；金门大桥 Claude，Anthropic <a href="https://transformer-circuits.pub/2024/scaling-monosemanticity/">《Scaling Monosemanticity》</a>（2024）；盲审，Anthropic <a href="https://www.anthropic.com/research/auditing-hidden-objectives">《Auditing language models for hidden objectives》</a>（2025）；国际象棋概念，Schut 等 <a href="https://arxiv.org/abs/2310.16410">《Bridging the Human-AI Knowledge Gap》</a>（2023）。</span></p>
+</section>
 </main>
 
 <footer class="mono"><a class="footer-brand" href="https://sec4.si/">SEC4.SI / SECURITY FOR SI</a><span class="research-labels">INTERPRETABILITY / FEATURES / CIRCUITS</span><div class="footer-links"><a href="https://benchmark.sec4.si/">Benchmark ↗</a><span>© 2026 SEC4SI</span></div><a class="site-address" href="https://lens.sec4.si/">lens.sec4.si</a></footer>
