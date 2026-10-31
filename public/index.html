@@ -60,7 +60,7 @@
         <p class="takeaway"><span lang="en">That is interpretability: translating numbers into concepts, and concepts into a process we can read.</span><span lang="zh-CN">这就是可解释性：把数字翻译成概念，再把概念连成我们读得懂的过程。</span></p>
       </article>
     </div>
-    <div class="stage" aria-hidden="true">
+    <div class="stage">
       <div class="stage-meta mono"><span class="stage-fig"></span><span lang="en">SCHEMATIC</span><span lang="zh-CN">示意</span></div>
       <div class="stage-scenes"></div>
     </div>
@@ -93,7 +93,7 @@
         <p class="takeaway"><span lang="en">Behavior tells us what a model does. Only its internals tell us why. The more important the work we hand to models, the more we need to know why.</span><span lang="zh-CN">行为只能告诉我们模型做了什么，只有内部才能告诉我们为什么。交给模型的工作越重要，我们越需要知道为什么。</span></p>
       </article>
     </div>
-    <div class="stage" aria-hidden="true">
+    <div class="stage">
       <div class="stage-meta mono"><span class="stage-fig"></span><span lang="en">SCHEMATIC</span><span lang="zh-CN">示意</span></div>
       <div class="stage-scenes"></div>
     </div>
@@ -133,12 +133,51 @@
         <p class="takeaway"><span lang="en">A breakthrough would take us from “it seems to work” to “we know why it works”: able to fix it, steer it, audit it, and learn from it.</span><span lang="zh-CN">突破会让我们从“它好像能用”走到“我们知道它为什么能用”：修得了它，调得了它，查得了它，也学得了它。</span></p>
       </article>
     </div>
-    <div class="stage" aria-hidden="true">
+    <div class="stage">
       <div class="stage-meta mono"><span class="stage-fig"></span><span lang="en">SCHEMATIC</span><span lang="zh-CN">示意</span></div>
       <div class="stage-scenes"></div>
     </div>
   </div>
   <p class="chapter-note mono"><span lang="en">All figures in this chapter are schematic, and the model outputs shown are illustrative. Sources: the hallucination circuit, Anthropic, <a href="https://transformer-circuits.pub/2025/attribution-graphs/biology.html">“On the Biology of a Large Language Model”</a> (2025); Golden Gate Claude, Anthropic, <a href="https://transformer-circuits.pub/2024/scaling-monosemanticity/">“Scaling Monosemanticity”</a> (2024); the blind audit, Anthropic, <a href="https://www.anthropic.com/research/auditing-hidden-objectives">“Auditing language models for hidden objectives”</a> (2025); chess concepts, Schut et al., <a href="https://arxiv.org/abs/2310.16410">“Bridging the Human-AI Knowledge Gap”</a> (2023).</span><span lang="zh-CN">本章图示均为示意，图中的模型输出为示意文本。来源：幻觉电路，Anthropic <a href="https://transformer-circuits.pub/2025/attribution-graphs/biology.html">《On the Biology of a Large Language Model》</a>（2025）；金门大桥 Claude，Anthropic <a href="https://transformer-circuits.pub/2024/scaling-monosemanticity/">《Scaling Monosemanticity》</a>（2024）；盲审，Anthropic <a href="https://www.anthropic.com/research/auditing-hidden-objectives">《Auditing language models for hidden objectives》</a>（2025）；国际象棋概念，Schut 等 <a href="https://arxiv.org/abs/2310.16410">《Bridging the Human-AI Knowledge Gap》</a>（2023）。</span></p>
+</section>
+
+<section class="chapter" id="limits" data-chapter="4" aria-labelledby="limits-title">
+  <div class="chapter-head">
+    <span class="chapter-no mono">04</span>
+    <h2 id="limits-title"><span lang="en">Where the field stands</span><span lang="zh-CN">现状与局限</span></h2>
+  </div>
+  <div class="scrolly">
+    <div class="steps">
+      <article class="step">
+        <span class="step-no mono">4.1</span>
+        <h3><span lang="en">How far we have come.</span><span lang="zh-CN">已经走了多远。</span></h3>
+        <p><span lang="en">In six years the field went from naming single neurons in an image model to tracing the computation of production language models, and now to models that describe their own internal states.</span><span lang="zh-CN">六年间，这个领域从给图像模型里的单个神经元命名，走到追踪生产级大模型的计算过程，再到让模型描述自己的内部状态。</span></p>
+        <p class="hint mono"><span lang="en">Hover the timeline.</span><span lang="zh-CN">悬停时间线。</span></p>
+      </article>
+      <article class="step">
+        <span class="step-no mono">4.2</span>
+        <h3><span lang="en">Most of the map is still blank.</span><span lang="zh-CN">地图的大部分仍是空白。</span></h3>
+        <p><span lang="en">The best tools today explain only part of what a model computes. By the researchers’ own estimate, attribution graphs give satisfying insight for about a quarter of the prompts they try, and even then part of the computation remains unexplained “dark matter”.</span><span lang="zh-CN">今天最好的工具也只能解释模型计算的一部分。按研究者自己的估计，归因图只对大约四分之一的提示词能给出令人满意的解释；即使在这些提示词上，仍有一部分计算是无法解释的“暗物质”。</span></p>
+      </article>
+      <article class="step">
+        <span class="step-no mono">4.3</span>
+        <h3><span lang="en">The features are not unique.</span><span lang="zh-CN">特征并不唯一。</span></h3>
+        <p><span lang="en">A dictionary is a choice, not a discovery. Train it again, or make it larger, and concepts split differently and the boundaries move. We do not yet know which decomposition, if any, is the one the model actually uses.</span><span lang="zh-CN">字典是一种选择，而不是一项发现。重新训练一次，或者把字典做大，概念就会以不同方式分裂，边界也会移动。模型真正使用的是哪一种拆法，甚至有没有这样一种拆法，我们还不知道。</span></p>
+        <p class="hint mono"><span lang="en">Switch runs.</span><span lang="zh-CN">切换训练结果。</span></p>
+      </article>
+      <article class="step">
+        <span class="step-no mono">4.4</span>
+        <h3><span lang="en">Understanding does not scale yet.</span><span lang="zh-CN">理解还无法规模化。</span></h3>
+        <p><span lang="en">Even for a prompt of a few dozen words, reading the circuit takes a researcher a few hours. Models answer far more than people could ever read, so interpretation has to become automated before it can keep up.</span><span lang="zh-CN">即使提示词只有几十个词，读懂它背后的电路也要研究员花上几个小时。模型回答的量远远超出人力所能阅读，解释工作必须自动化，才可能跟得上。</span></p>
+        <p class="takeaway"><span lang="en">This is where the field stands: real tools, real findings, and most of the map still blank. Lens is here to help fill it in.</span><span lang="zh-CN">这就是领域的现状：有了真正的工具，也有了真正的发现，但地图的大部分仍是空白。Lens 要做的，就是一起把它填上。</span></p>
+      </article>
+    </div>
+    <div class="stage">
+      <div class="stage-meta mono"><span class="stage-fig"></span><span lang="en">SCHEMATIC</span><span lang="zh-CN">示意</span></div>
+      <div class="stage-scenes"></div>
+    </div>
+  </div>
+  <p class="chapter-note mono"><span lang="en">All figures in this chapter are schematic; the timeline links to each paper. The quarter-of-prompts estimate and “dark matter” are from Anthropic, <a href="https://transformer-circuits.pub/2025/attribution-graphs/biology.html">“On the Biology of a Large Language Model”</a> (2025); the few hours per prompt is from Anthropic, <a href="https://www.anthropic.com/research/tracing-thoughts-language-model">“Tracing the thoughts of a large language model”</a> (2025); feature splitting is described in <a href="https://transformer-circuits.pub/2023/monosemantic-features/index.html">“Towards Monosemanticity”</a> (2023).</span><span lang="zh-CN">本章图示均为示意，时间线中附有各篇论文链接。“约四分之一的提示词”和“暗物质”出自 Anthropic <a href="https://transformer-circuits.pub/2025/attribution-graphs/biology.html">《On the Biology of a Large Language Model》</a>（2025）；“每个提示词需要数小时”出自 Anthropic <a href="https://www.anthropic.com/research/tracing-thoughts-language-model">《Tracing the thoughts of a large language model》</a>（2025）；特征分裂见 <a href="https://transformer-circuits.pub/2023/monosemantic-features/index.html">《Towards Monosemanticity》</a>（2023）。</span></p>
 </section>
 </main>
 
