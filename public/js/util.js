@@ -16,6 +16,9 @@ export function html(tag, className, parent) {
   return node;
 }
 
+export const curve = (x1, y1, x2, y2) => `M${x1} ${y1}C${(x1 + x2) / 2} ${y1} ${(x1 + x2) / 2} ${y2} ${x2} ${y2}`;
+export const rise = (x1, y1, x2, y2) => `M${x1} ${y1}C${x1} ${(y1 + y2) / 2} ${x2} ${(y1 + y2) / 2} ${x2} ${y2}`;
+
 // A labelled box centred on (x, y). The parent must already be in the document so the text can be measured.
 export function chip(parent, x, y, label, className = '') {
   const g = svg('g', { class: `chip ${className}`, transform: `translate(${x} ${y})` }, parent);

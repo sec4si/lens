@@ -1,9 +1,9 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<script>if (/^zh\b/i.test(navigator.language || '')) document.documentElement.lang = 'zh-CN'</script>
+<script>let lang; try { lang = localStorage.getItem('lang') } catch {} if (lang ? lang === 'zh' : /^zh\b/i.test(navigator.language || '')) document.documentElement.lang = 'zh-CN'</script>
 <meta name="theme-color" content="#090c09"><meta name="description" content="Lens is the sec4si interpretability research site: what interpretability is, why it matters, and where the field stands."><meta property="og:title" content="Lens — sec4.si"><meta property="og:type" content="website"><meta property="og:url" content="https://lens.sec4.si/"><link rel="canonical" href="https://lens.sec4.si/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/styles.css"><title>Lens — sec4.si</title></head>
 <body><a class="skip" href="#main"><span lang="en">Skip to content</span><span lang="zh-CN">跳到正文</span></a>
-<header class="site-header"><a class="brand" href="https://sec4.si/" aria-label="sec4.si home"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 5v22h7M28 5v22h-7"/><path class="slash" d="m19 6-6 20"/></svg><span>sec4<span class="dot">.</span>si</span></a><span class="project-breadcrumb mono">/ lens</span><nav aria-label="Project navigation"><a href="https://benchmark.sec4.si/">Benchmark</a><a href="https://lens.sec4.si/" aria-current="page">Lens</a><a class="repo-link" href="https://github.com/sec4si/lens">GitHub <svg class="arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></a></nav></header>
+<header class="site-header"><a class="brand" href="https://sec4.si/" aria-label="sec4.si home"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 5v22h7M28 5v22h-7"/><path class="slash" d="m19 6-6 20"/></svg><span>sec4<span class="dot">.</span>si</span></a><span class="project-breadcrumb mono">/ lens</span><nav aria-label="Project navigation"><a href="https://benchmark.sec4.si/">Benchmark</a><a href="https://lens.sec4.si/" aria-current="page">Lens</a><button class="lang-switch mono" type="button" aria-label="Switch language / 切换语言"><span class="en-mark">EN</span> / <span class="zh-mark">中</span></button><a class="repo-link" href="https://github.com/sec4si/lens">GitHub <svg class="arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></a></nav></header>
 
 <main id="main">
 <section class="prologue">
@@ -24,7 +24,7 @@
   <a class="scroll-cue mono" href="#what"><span lang="en">What is interpretability</span><span lang="zh-CN">什么是可解释性</span> ↓</a>
 </section>
 
-<section class="chapter" id="what" aria-labelledby="what-title">
+<section class="chapter" id="what" data-chapter="1" aria-labelledby="what-title">
   <div class="chapter-head">
     <span class="chapter-no mono">01</span>
     <h2 id="what-title"><span lang="en">What is interpretability</span><span lang="zh-CN">什么是可解释性</span></h2>
@@ -66,6 +66,39 @@
     </div>
   </div>
   <p class="chapter-note mono"><span lang="en">All figures in this chapter are schematic. The Dallas example is adapted from Anthropic, <a href="https://transformer-circuits.pub/2025/attribution-graphs/biology.html">“On the Biology of a Large Language Model”</a> (2025).</span><span lang="zh-CN">本章图示均为示意。达拉斯案例改编自 Anthropic <a href="https://transformer-circuits.pub/2025/attribution-graphs/biology.html">《On the Biology of a Large Language Model》</a>（2025）。</span></p>
+</section>
+
+<section class="chapter" id="why" data-chapter="2" aria-labelledby="why-title">
+  <div class="chapter-head">
+    <span class="chapter-no mono">02</span>
+    <h2 id="why-title"><span lang="en">Why study it</span><span lang="zh-CN">为什么要研究</span></h2>
+  </div>
+  <div class="scrolly">
+    <div class="steps">
+      <article class="step">
+        <span class="step-no mono">2.1</span>
+        <h3><span lang="en">Grown, not written.</span><span lang="zh-CN">培育，而非编写。</span></h3>
+        <p><span lang="en">Ordinary software is written line by line, and every line has an author who knows why it is there. A model is grown: training adjusts it billions of times until it works. Nobody decided how it does what it does, not even the people who built it.</span><span lang="zh-CN">普通软件是一行行写出来的，每一行都有作者，作者知道它为什么在那里。模型是“长”出来的：训练对它做数十亿次调整，直到它能用。它具体怎么做事，没有人决定过，包括造出它的人。</span></p>
+      </article>
+      <article class="step">
+        <span class="step-no mono">2.2</span>
+        <h3><span lang="en">Right answers can hide wrong reasons.</span><span lang="zh-CN">答对了，不代表理由对。</span></h3>
+        <p><span lang="en">We usually judge a model by testing its behavior, but a test only sees the answer. A model can earn a perfect score with a shortcut that happens to work on the test set, then fail the moment the shortcut stops applying.</span><span lang="zh-CN">我们通常靠测试行为来评估模型，但测试只看得到答案。模型可能靠一条恰好在测试集上管用的捷径拿到满分，一旦捷径不再适用，就会出错。</span></p>
+        <p class="hint mono"><span lang="en">Switch views.</span><span lang="zh-CN">切换视图。</span></p>
+      </article>
+      <article class="step">
+        <span class="step-no mono">2.3</span>
+        <h3><span lang="en">What it says is not always what it does.</span><span lang="zh-CN">它说的，不一定是它做的。</span></h3>
+        <p><span lang="en">Ask a model how it solved 36 + 59 and it describes carrying the one, the method taught in school. Look inside and it did something else: one path estimated the rough size of the sum while another worked out the last digit exactly.</span><span lang="zh-CN">问模型 36 + 59 是怎么算的，它会说先算个位、再进一，也就是学校教的方法。但看它的内部，做法完全不同：一条通路估算结果的大致范围，另一条精确算出个位。</span></p>
+        <p class="takeaway"><span lang="en">Behavior tells us what a model does. Only its internals tell us why. The more important the work we hand to models, the more we need to know why.</span><span lang="zh-CN">行为只能告诉我们模型做了什么，只有内部才能告诉我们为什么。交给模型的工作越重要，我们越需要知道为什么。</span></p>
+      </article>
+    </div>
+    <div class="stage" aria-hidden="true">
+      <div class="stage-meta mono"><span class="stage-fig"></span><span lang="en">SCHEMATIC</span><span lang="zh-CN">示意</span></div>
+      <div class="stage-scenes"></div>
+    </div>
+  </div>
+  <p class="chapter-note mono"><span lang="en">All figures in this chapter are schematic. The 36 + 59 example is adapted from Anthropic, <a href="https://transformer-circuits.pub/2025/attribution-graphs/biology.html">“On the Biology of a Large Language Model”</a> (2025). The capital-city shortcut is an illustration, not a measured result.</span><span lang="zh-CN">本章图示均为示意。36 + 59 的案例改编自 Anthropic <a href="https://transformer-circuits.pub/2025/attribution-graphs/biology.html">《On the Biology of a Large Language Model》</a>（2025）。首都捷径是示意性的例子，不是实测结果。</span></p>
 </section>
 </main>
 

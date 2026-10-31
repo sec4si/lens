@@ -1,9 +1,16 @@
-import { t, html } from './util.js';
+import { t, zh, html } from './util.js';
 import { lens } from './lens.js';
-import { blackbox, weights, neurons, untangle, circuit } from './scenes.js';
+import { blackbox, weights, neurons, untangle, circuit } from './what.js';
+import { grown, shortcuts, says } from './why.js';
 
 document.title = t('Lens — Interpretability · sec4.si', 'Lens — 可解释性 · sec4.si');
 lens(document.getElementById('specimen'));
+
+// Figures are built once in the current language, so switching reloads the page.
+document.querySelector('.lang-switch').addEventListener('click', () => {
+  try { localStorage.setItem('lang', zh ? 'en' : 'zh'); } catch {}
+  location.reload();
+});
 
 // Chapter figures are measured on build, so wait for the fonts first.
 await document.fonts.ready;
@@ -29,7 +36,7 @@ function scrolly(section, factories) {
     current = i;
     scenes[i].el.classList.add('is-active');
     steps[i].classList.add('is-active');
-    figure.textContent = `${t('FIG', '图')} 1.${i + 1}`;
+    figure.textContent = `${t('FIG', '图')} ${section.dataset.chapter}.${i + 1}`;
     if (inView) scenes[i].enter();
   };
   const band = new IntersectionObserver(entries => {
@@ -45,3 +52,4 @@ function scrolly(section, factories) {
 }
 
 scrolly(document.getElementById('what'), [blackbox, weights, neurons, untangle, circuit]);
+scrolly(document.getElementById('why'), [grown, shortcuts, says]);

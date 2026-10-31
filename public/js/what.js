@@ -1,8 +1,6 @@
-import { t, reduced, svg, html, chip, fitCanvas, random } from './util.js';
+import { t, reduced, svg, html, chip, fitCanvas, random, curve, rise } from './util.js';
 
 const INPUTS = [t('capital', '首府'), t('state', '州'), t('Dallas', '达拉斯')];
-const curve = (x1, y1, x2, y2) => `M${x1} ${y1}C${(x1 + x2) / 2} ${y1} ${(x1 + x2) / 2} ${y2} ${x2} ${y2}`;
-const rise = (x1, y1, x2, y2) => `M${x1} ${y1}C${x1} ${(y1 + y2) / 2} ${x2} ${(y1 + y2) / 2} ${x2} ${y2}`;
 
 // 1.1 Prompt in, answer out, nothing visible in between.
 export function blackbox(scene, caption) {
