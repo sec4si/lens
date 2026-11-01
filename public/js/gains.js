@@ -169,3 +169,58 @@ export function discover(scene, caption) {
     leave() { clearTimeout(timer); },
   };
 }
+
+const MAINTAIN = [
+  {
+    status: ['early', t('EARLY FORM', '已有雏形')],
+    lines: [
+      ['cmd', '$ model diff base..chat'],
+      ['add', `+ feature  ${t('“declines harmful requests”', '“拒绝有害请求”')}`],
+      ['add', `+ feature  ${t('“assistant persona”', '“助手人格”')}`],
+      ['mod', `~ feature  ${t('“sarcasm”', '“讽刺”')}  −42%`],
+      ['del', `− feature  ${t('“raw forum formatting”', '“论坛原始排版”')}`],
+    ],
+    caption: t('Diff: compare two versions feature by feature and see exactly what fine-tuning changed.', 'Diff：逐个特征对比两个版本，准确看出微调改变了什么。'),
+  },
+  {
+    status: ['rough', t('WORKS, ROUGHLY', '能做，但粗糙')],
+    lines: [
+      ['cmd', `$ model patch ${t('"Eiffel Tower is in"', '"埃菲尔铁塔位于"')} ${t('Paris', '巴黎')} → ${t('Rome', '罗马')}`],
+      ['note', `  ${t('edit one MLP layer · rank-1 · no retraining', '只改一层 MLP · 秩 1 · 无需重新训练')}`],
+      ['add', `✓ ${t('“The Eiffel Tower is in” → Rome', '“埃菲尔铁塔位于” → 罗马')}`],
+      ['add', `✓ ${t('“To see the Eiffel Tower, fly to” → Rome', '“想看埃菲尔铁塔，就飞去” → 罗马')}`],
+      ['keep', `= ${t('“The Louvre is in” → Paris (untouched)', '“卢浮宫位于” → 巴黎（不受影响）')}`],
+    ],
+    caption: t('Patch: rewrite a single fact in the weights. It generalizes, but many edits start to interfere.', 'Patch：直接在权重里改写一条事实，改动能泛化，但改多了会互相干扰。'),
+  },
+  {
+    status: ['vision', t('VISION', '愿景')],
+    lines: [
+      ['cmd', `$ model compose base + arithmetic@model-b`],
+      ['plan', `· ${t('extract the “arithmetic” circuit from model-b', '从 model-b 中取出“算术”电路')}`],
+      ['plan', `· ${t('fit it into base, nothing else changes', '装进 base，其他能力不受影响')}`],
+      ['note', `  ${t('blocked on: features superposed across layers', '卡在：特征以叠加方式分散在各层')}`],
+      ['note', `  ${t('first step: weight-sparse models with separable circuits', '第一步：电路可分离的权重稀疏模型')}`],
+    ],
+    caption: t('Compose: assemble capabilities from different models without retraining. Not possible yet.', 'Compose：把不同模型的能力组装在一起，无需重新训练。目前还做不到。'),
+  },
+];
+
+// 3.5 Version control for models: diff, patch and compose, each marked with how real it is today.
+export function maintain(scene, caption) {
+  const box = html('div', 'repo mono', scene);
+  const status = html('span', 'repo-status', box);
+  const body = html('div', 'repo-body', box);
+  return views(scene, ['diff', 'patch', 'compose'], i => {
+    const { status: [kind, label], lines } = MAINTAIN[i];
+    status.className = `repo-status ${kind}`;
+    status.textContent = label;
+    body.replaceChildren(...lines.map(([cls, text], k) => {
+      const line = html('div', `repo-line ${cls}`);
+      line.textContent = text;
+      line.style.animationDelay = `${k * 0.18}s`;
+      return line;
+    }));
+    caption(MAINTAIN[i].caption);
+  });
+}
