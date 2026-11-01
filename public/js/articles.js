@@ -3,6 +3,12 @@ import { t, html } from './util.js';
 // Every published article, newest first. Each lives at /research/<slug>/.
 export const ARTICLES = [
   {
+    slug: 'sparse-circuits',
+    date: '2026-11-02',
+    title: ['Can a model’s reasoning be made small enough to read?', '能让模型的思路小到读得懂吗？'],
+    summary: ['We cut almost all the wires inside small models as they learned. Each skill ended up on its own small circuit: one we could remove, one we could read, and, with the right interface, two we could plug together.', '我们在小模型学习时剪掉了它几乎所有的连线。每项本领都落在了一个独立的小电路上：可以单独拆掉，可以读懂，有了合适的接口，还能把两项本领插到一起。'],
+  },
+  {
     slug: 'methods',
     date: '2026-11-01',
     title: ['A field guide to interpretability methods', '可解释性方法全景'],

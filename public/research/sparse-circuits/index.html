@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<script>let lang; try { lang = localStorage.getItem('lang') } catch {} if (lang ? lang === 'zh' : /^zh\b/i.test(navigator.language || '')) document.documentElement.lang = 'zh-CN'</script>
+<meta name="theme-color" content="#090c09"><meta name="description" content="A small experiment: if most of a model’s connections are cut during training, does each skill end up on a small, separate set of connections that people could actually read?"><link rel="canonical" href="https://lens.sec4.si/research/sparse-circuits/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/styles.css"><title>Can a model’s reasoning be made small enough to read? — Lens</title></head>
+<body><a class="skip" href="#main"><span lang="en">Skip to content</span><span lang="zh-CN">跳到正文</span></a>
+<header class="site-header"><a class="brand" href="https://sec4.si/" aria-label="sec4.si home"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 5v22h7M28 5v22h-7"/><path class="slash" d="m19 6-6 20"/></svg><span>sec4<span class="dot">.</span>si</span></a><span class="project-breadcrumb mono">/ lens</span><nav aria-label="Project navigation"><a href="https://benchmark.sec4.si/">Benchmark</a><a href="https://infer.sec4.si/">Infer</a><a href="https://lens.sec4.si/">Lens</a><a href="/#research" aria-current="page"><span lang="en">Research</span><span lang="zh-CN">研究</span></a><button class="lang-switch mono" type="button" aria-label="Switch language / 切换语言"><span class="en-mark">EN</span> / <span class="zh-mark">中</span></button><a class="repo-link" href="https://github.com/sec4si/lens">GitHub <svg class="arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></a></nav></header>
+
+<main id="main" class="article">
+<header class="article-head">
+  <a class="back mono" href="/#research">← <span lang="en">Research</span><span lang="zh-CN">研究</span></a>
+  <div class="eyebrow mono"><span class="cross" aria-hidden="true"></span> RESEARCH / 2026-11-02</div>
+  <h1><span lang="en">Can a model’s reasoning be made small enough to read?</span><span lang="zh-CN">能让模型的思路小到读得懂吗？</span></h1>
+  <p class="dek"><span lang="en">We cut almost all the connections inside small AI models while they learned. Each skill ended up on a small, separate set of connections: we could remove one skill without touching the others, and read how one of them works. Bolting separately learned skills together failed at first; once each piece had its own channel and learned to stay quiet on puzzles that were not its own, it worked.</span><span lang="zh-CN">我们在小型 AI 模型学习的时候，剪掉了它内部几乎所有的连线。结果每项本领都落在了一小撮、彼此分开的连线上：可以单独拿掉一项本领而不伤到其他，也能读懂其中一项是怎么做到的。把分开学会的本领装到一起，一开始失败了；直到给每一块开了专用通道，并让它学会"不是自己的题就闭嘴"，才成功。</span></p>
+  <p class="byline mono">sec4si · ZacharyZcR</p>
+</header>
+
+<div class="prose">
+  <p><span lang="en">Think of a language model as a huge switchboard: millions of numbered wires, each carrying a little signal. When the model answers a question, some of those wires do the real work. Researchers call that set of wires a <b>circuit</b>. If we could find the circuit behind an answer and follow it wire by wire, we would know <i>how</i> the model got there.</span><span lang="zh-CN">可以把语言模型想象成一个巨大的配线板：上百万根编了号的连线，每根都传着一点信号。模型回答问题时，其中一部分连线在真正干活，研究者把这部分连线叫作<b>电路</b>。如果能找到一个回答背后的电路，并且一根根地追下去，我们就知道模型<i>是怎么</i>想出这个答案的。</span></p>
+  <p><span lang="en">The trouble is that in a normal model, even a simple skill uses thousands of wires, tangled up with every other skill. Nobody can read that. So we tried the opposite: while the model learns, keep cutting its wires until only 2% are left. Does each skill then end up on a circuit small and separate enough to read?</span><span lang="zh-CN">麻烦在于，普通模型里哪怕一项很简单的本领，也要用到成千上万根连线，而且和其他本领缠在一起，没人读得过来。所以我们反过来做：在模型学习的同时，不断剪掉它的连线，直到只剩 2%。这样一来，每项本领会不会落在一个小到、也分得开到能读懂的电路上？</span></p>
+</div>
+<aside class="prose callout">
+  <h3><span lang="en">Where interpretability comes in</span><span lang="zh-CN">这和可解释性有什么关系</span></h3>
+  <ol>
+    <li><span lang="en"><b>Small enough to read.</b> Explaining a model means saying what its parts do. A few thousand tangled wires is beyond anyone; a few hundred, gathered in a few places, is something a person can work through.</span><span lang="zh-CN"><b>小到读得过来。</b>解释一个模型，就是说清楚它的每一部分在做什么。成千上万根缠在一起的线，谁也读不完；几百根、集中在几个地方，人就有可能一根根看下去。</span></li>
+    <li><span lang="en"><b>Separate enough to point at.</b> If each skill uses its own wires, we can point at one part of the model and say “this is where it handles quotes”. That is one of the basic questions interpretability asks.</span><span lang="zh-CN"><b>分得开，才能指得出来。</b>如果每项本领用的是各自的连线，我们就能指着模型的某一部分说：“处理引号的本领就在这里。”这正是可解释性要回答的基本问题之一。</span></li>
+    <li><span lang="en"><b>Readable enough to explain.</b> The final test is to say, in plain words, how a circuit does its job. For the quote puzzle we can: one part of the model looks back at the unpaired quote and copies it. That is section 4.</span><span lang="zh-CN"><b>读得懂，才能讲得清。</b>最终的检验，是用一句人话说清楚一个电路是怎么完成任务的。引号题我们做到了：模型里有一个部件会回头找到那个没配对的引号，把它抄过来。详见第 4 节。</span></li>
+  </ol>
+</aside>
+<div class="prose">
+  <h2><span lang="en">Three small puzzles</span><span lang="zh-CN">三道小题</span></h2>
+  <p><span lang="en">We trained each model on three kinds of tiny puzzles, all mixed together. Each asks for just one answer, the next symbol. They are easy, but each needs a different way of thinking: matching a pair, keeping track of nesting, and looking something up. Try a few.</span><span lang="zh-CN">每个模型都同时学三种小题，题目混在一起出。每道题只要求答出下一个符号。题目都很简单，但需要的思路各不相同：配对、记住嵌套关系、查找。可以自己点几道看看。</span></p>
+</div>
+<figure class="inline-figure">
+  <div class="stage inline">
+    <div class="stage-meta mono"><span><span lang="en">FIG 1</span><span lang="zh-CN">图 1</span></span><span lang="en">LIVE GENERATOR</span><span lang="zh-CN">实时生成</span></div>
+    <div class="stage-scenes"></div>
+  </div>
+</figure>
+<div class="prose">
+  <h2><span lang="en">How we did it</span><span lang="zh-CN">我们是怎么做的</span></h2>
+  <p><span lang="en">The models are small, two layers deep. A normal (“dense”) model keeps all its wires. A “sparse” model has most of them cut as it learns. Both learn all three puzzles almost perfectly.</span><span lang="zh-CN">模型都很小，只有两层。普通模型（我们叫它“稠密”模型）保留全部连线；“稀疏”模型则在学习过程中被剪掉了大部分连线。两种模型都能把三种题做得几乎全对。</span></p>
+</div>
+<section class="scrolly-block" data-chapter="2">
+  <div class="scrolly">
+    <div class="steps">
+      <article class="step">
+        <span class="step-no mono">2.1</span>
+        <h3><span lang="en">Cutting wires while it learns</span><span lang="zh-CN">边学边剪</span></h3>
+        <p><span lang="en">After every lesson, each part of the model keeps only its strongest wires and the rest are cut. We start with every wire and end with just 2% of them.</span><span lang="zh-CN">每学一步，模型的每个部分只保留最强的那些连线，其余的剪掉。一开始所有连线都在，最后只剩 2%。</span></p>
+        <p><span lang="en">The price: to end up with the same number of working wires, a sparse model has to start much bigger, and it learns more slowly.</span><span lang="zh-CN">代价是：要剩下同样多的有效连线，稀疏模型一开始就得大得多，学得也更慢。</span></p>
+      </article>
+      <article class="step">
+        <span class="step-no mono">2.2</span>
+        <h3><span lang="en">Finding the circuit</span><span lang="zh-CN">找出电路</span></h3>
+        <p><span lang="en">To find a puzzle’s circuit, we let a small helper switch wires off, rewarding it for switching off as many as it can while the model still answers correctly. Whatever must stay on is the circuit.</span><span lang="zh-CN">为了找出某道题的电路，我们让一个小助手去关掉连线，关得越多越好，但模型还得答对。必须保持开着的那些连线，就是这道题的电路。</span></p>
+        <p><span lang="en">The helper is not perfect. Sometimes it gives up and keeps nearly everything, the dots on the dashed lines. We run it many times and keep its best result, so every number here is an upper bound: the true circuit may be even smaller.</span><span lang="zh-CN">这个小助手并不完美：有时它会放弃，几乎什么都不关，就是图中落在虚线上的那些点。所以我们让它试很多次，取最好的一次。因此下文的每个数字都是上限，真正的电路可能更小。</span></p>
+      </article>
+      <article class="step">
+        <span class="step-no mono">2.3</span>
+        <h3><span lang="en">How many wires does it take?</span><span lang="zh-CN">要多少根线才够？</span></h3>
+        <p><span lang="en">Here we switch wires back on one at a time, most important first, and watch the score. For the sparse model the answer snaps into place after one or two thousand wires; the dense models need many times more.</span><span lang="zh-CN">这里把连线按重要程度一根根重新接上，看准确率怎么变。稀疏模型接上一两千根，答案就“咔哒”一下对了；稠密模型要多出好几倍。</span></p>
+      </article>
+    </div>
+    <div class="stage">
+      <div class="stage-meta mono"><span class="stage-fig"></span><span lang="en">DATA: OUR EXPERIMENT</span><span lang="zh-CN">数据：本文实验</span></div>
+      <div class="stage-scenes"></div>
+    </div>
+  </div>
+</section>
+<details class="tech prose-box">
+  <summary class="mono"><span lang="en">Technical details</span><span lang="zh-CN">技术细节</span></summary>
+  <p><span lang="en">Training: after every optimizer step, each weight matrix keeps its top-k weights by magnitude; the kept share falls exponentially from 100% to the target over the first half of 12,000 steps.</span><span lang="zh-CN">训练：每次优化之后，每个权重矩阵只保留绝对值最大的 top-k 个权重；保留比例在 12,000 步的前一半里按指数从 100% 降到目标值。</span></p>
+  <p><span lang="en">Circuit search: every non-zero weight gets a learnable gate (straight-through binary mask with an L1 penalty λ). We rank weights by gate value and binary-search the fewest that keep test accuracy at 95%, over nine values of λ. Removed weights are set to zero. At large λ all gates close and the ranking is lost, which is why some runs keep the whole model.</span><span lang="zh-CN">电路搜索：每个非零权重配一个可学习的开关（直通估计的二值 mask，加 L1 惩罚 λ）。按开关强弱排序，二分搜索出仍能保持 95% 准确率的最少权重数，λ 取九个值。被去掉的权重置零。λ 太大时所有开关一起关闭、排序信息丢失，这就是有些运行几乎保留了整个模型的原因。</span></p>
+  <p><span lang="en">“Wires” are weights, and the counts include the embedding matrices. Three seeds per configuration.</span><span lang="zh-CN">文中的“连线”就是权重，计数包含嵌入矩阵。每个配置跑三个随机种子。</span></p>
+</details>
+<div class="prose">
+  <h2><span lang="en">What we found</span><span lang="zh-CN">我们发现了什么</span></h2>
+</div>
+<section class="scrolly-block" data-chapter="3">
+  <div class="scrolly">
+    <div class="steps">
+      <article class="step">
+        <span class="step-no mono">3.1</span>
+        <h3><span lang="en">Sparse circuits are several times smaller</span><span lang="zh-CN">稀疏模型的电路小好几倍</span></h3>
+        <p><span lang="en">Compared with the best normal model, the sparse model’s circuits are five to seven times smaller.</span><span lang="zh-CN">和表现最好的普通模型相比，稀疏模型的电路小了五到七倍。</span></p>
+        <p><span lang="en">Compared with a normal model of the same size, the gap is even larger, though those numbers are rough.</span><span lang="zh-CN">如果和同样大小的普通模型比，差距还要大得多，不过那几组数字比较粗糙。</span></p>
+      </article>
+      <article class="step">
+        <span class="step-no mono">3.2</span>
+        <h3><span lang="en">It is not just because the model is bigger</span><span lang="zh-CN">不只是因为模型更大</span></h3>
+        <p><span lang="en">Our sparse model is wider than the normal one we compared it with, so we checked whether size alone explains the gap. It does not: making a normal model bigger made its circuits bigger, not smaller.</span><span lang="zh-CN">我们拿来比较的稀疏模型比普通模型更宽，所以必须先排除“只是因为它更大”。结果并非如此：把普通模型做大，电路反而变大，而不是变小。</span></p>
+        <p><span lang="en">For sparse models, what matters is how many wires are left, not what share. With the same number left, a wider model does better.</span><span lang="zh-CN">对稀疏模型来说，关键是剩下多少根连线，而不是剩下的比例；剩下的数量相同时，更宽的模型更好。</span></p>
+      </article>
+      <article class="step">
+        <span class="step-no mono">3.3</span>
+        <h3><span lang="en">A fairer test makes the gap bigger</span><span lang="zh-CN">换一种更公平的测法，差距更大</span></h3>
+        <p><span lang="en">Switching a wire off by setting it to zero might be easier on sparse models, whose cut wires were zero already. So we also tried replacing each switched-off wire with its average signal, which is gentler on the rest of the model.</span><span lang="zh-CN">把连线直接设成零来“关掉”，可能对稀疏模型更有利，因为它被剪掉的连线本来就是零。所以我们换了一种更温和的方式：用这根线平时的平均信号代替它。</span></p>
+        <p><span lang="en">The gap grew: the sparse circuits came out six to twenty times smaller.</span><span lang="zh-CN">差距反而更大了：稀疏模型的电路小了六到二十倍。</span></p>
+      </article>
+      <article class="step">
+        <span class="step-no mono">3.4</span>
+        <h3><span lang="en">What a circuit looks like</span><span lang="zh-CN">电路长什么样</span></h3>
+        <p><span lang="en">Each dot is one wire a circuit keeps, drawn where it sits in the model; the three colours are the three puzzles. In the normal model the circuits spread everywhere and pile on top of each other.</span><span lang="zh-CN">图里每个点是电路保留的一根连线，画在它在模型中的位置；三种颜色对应三种题。普通模型的电路铺得到处都是，而且相互叠在一起。</span></p>
+        <p><span lang="en">In the sparse model they are thin and mostly apart: the three puzzles share only 2–16% of their wires, against 31–41% in the normal model. That separation is what should let us point at a part and name its job. The next section puts it to the test.</span><span lang="zh-CN">稀疏模型的电路则又细又基本分开：三种题之间共用的连线只有 2%～16%，普通模型是 31%～41%。正因为分得开，才有可能指着某一部分说出它负责什么。下一节就来检验这一点。</span></p>
+      </article>
+    </div>
+    <div class="stage">
+      <div class="stage-meta mono"><span class="stage-fig"></span><span lang="en">DATA: OUR EXPERIMENT</span><span lang="zh-CN">数据：本文实验</span></div>
+      <div class="stage-scenes"></div>
+    </div>
+  </div>
+</section>
+<div class="prose">
+  <h2><span lang="en">Take apart, read, put together</span><span lang="zh-CN">拆开、读懂、装回去</span></h2>
+  <p><span lang="en">Small, separate circuits are only worth something if we can use them. So we tried three things a mechanic would: remove a part, figure out how a part works, and fit parts from two machines into one.</span><span lang="zh-CN">又小又分开的电路，只有能拿来用才有价值。所以我们像修理工一样试了三件事：拆下一个零件、弄清一个零件怎么工作、把两台机器的零件装进一台。</span></p>
+</div>
+<section class="scrolly-block" data-chapter="4">
+  <div class="scrolly">
+    <div class="steps">
+      <article class="step">
+        <span class="step-no mono">4.1</span>
+        <h3><span lang="en">Remove one skill, keep the rest</span><span lang="zh-CN">拆掉一项本领，其余不受影响</span></h3>
+        <p><span lang="en">We deleted the wires that belong only to one puzzle and tested all three. In the sparse model each deletion broke exactly one puzzle, down to zero or close to it, while the other two stayed at 96–100%. Deleting the same number of random wires did far less harm.</span><span lang="zh-CN">我们删掉只属于某一道题的连线，再把三道题都测一遍。在稀疏模型里，删谁就只坏谁：被删的那道题掉到零或接近零，另外两道仍在 96%～100%。随机删掉同样多的连线，伤害则小得多。</span></p>
+        <p><span lang="en">This is causal evidence, the strongest kind interpretability can offer: that skill lives there. The normal model separated too, but less cleanly. And when we kept only two circuits together, the sparse model kept both skills while the normal one lost most of its quote skill: its circuits get in each other’s way.</span><span lang="zh-CN">这是可解释性能给出的最有力的一类证据，因果证据：这项本领就住在这里。普通模型也基本分得开，但没那么干净。而当我们只保留两个电路、把它们放在一起时，稀疏模型两项本领都保住了，普通模型却丢掉了大半的引号本领：它的电路会互相妨碍。</span></p>
+      </article>
+      <article class="step">
+        <span class="step-no mono">4.2</span>
+        <h3><span lang="en">Read how one skill works</span><span lang="zh-CN">读懂一项本领是怎么做到的</span></h3>
+        <p><span lang="en">For the quote puzzle, the answer fits in one sentence: <i>one part of the model looks back at the last unpaired quote and copies its kind.</i> Switch that one part off and the model is reduced to guessing; switch off any other part of the same kind and nothing changes.</span><span lang="zh-CN">引号题的答案可以用一句话说清：<i>模型里有一个部件，会回头找到最后那个没配对的引号，把它是单引号还是双引号抄过来。</i>关掉这个部件，模型就只能瞎猜；关掉其他同类部件，什么都不会变。</span></p>
+        <p><span lang="en">Both models do it the same way. The sparse one just needs about five times fewer wires to do it. Our first attempt found something else: when we only asked the circuit to be 95% right, the sparse model’s circuit was a shortcut that mostly guessed one kind of quote. Asking for 99% recovered the real mechanism. Right answers can hide wrong reasons, even inside our own tools.</span><span lang="zh-CN">两种模型用的是同一种做法，只是稀疏模型所需的连线少了大约五倍。我们第一次尝试时其实找到的是别的东西：当只要求电路答对 95% 时，稀疏模型的电路是一条捷径，基本上就是猜某一种引号。把要求提高到 99%，才找回了真正的机制。答对了不代表理由对，在我们自己的工具里也一样。</span></p>
+      </article>
+      <article class="step">
+        <span class="step-no mono">4.3</span>
+        <h3><span lang="en">Bolting skills straight together fails</span><span lang="zh-CN">直接把本领装到一起，行不通</span></h3>
+        <p><span lang="en">Finally we taught two copies of the same base model one new puzzle each, then added both sets of changes back into the base. Even with each new skill written into its own empty wires, so the two never touched the same wire, the combined model failed.</span><span lang="zh-CN">最后，我们让同一个底座模型的两个副本各学一道新题，再把两份改动一起加回底座。即使每项新本领都只写进各自的空位，两份改动没有共用任何一根连线，合起来的模型还是失败了。</span></p>
+        <p><span lang="en">Two separate problems showed up. Each copy forgot the old puzzle while learning the new one, which a little practice on the old puzzle fixes. But even then the merged model broke: each piece was learned as if the other did not exist, and both talk over the same shared channel inside the model. So we gave each new skill a private channel of its own. That fixed everything inside: the two pieces no longer touched at all, and the old skill was fully kept. What remained was a clash at the very end, where answers are chosen. Each piece had never seen the other’s puzzles, so it chimed in on them anyway: 83% of the quote mistakes disappeared as soon as the bracket piece was switched off.</span><span lang="zh-CN">这里冒出了两个独立的问题。一是每个副本在学新题时，都把旧题忘了；让它们顺带复习一点旧题，就能解决。但即便如此，合并后的模型还是会坏：每一块都是在“另一块不存在”的前提下学出来的，而两者都要通过模型内部同一条共享通道传递信号。于是我们给每项新本领开了一条专用通道。这解决了内部的所有问题：两块在内部完全不再接触，旧本领也完整保住了。剩下的冲突只出现在最后选答案的那一步：每一块都没见过对方的题，遇到了照样插嘴。只要关掉括号那一块，引号题的错误就有 83% 会消失。</span></p>
+      </article>
+      <article class="step">
+        <span class="step-no mono">4.4</span>
+        <h3><span lang="en">A short lesson repairs it</span><span lang="zh-CN">稍加磨合就能修好</span></h3>
+        <p><span lang="en">Bolted together, the models are not ready to use, but they are close. A short joint lesson of 50–100 steps on all three puzzles brought every skill back, while learning the two new puzzles from the base took 400 steps or more. The old skill came back fastest: it had not been lost, only drowned out.</span><span lang="zh-CN">拼装好的模型不能直接用，但已经很接近了。用三种题一起再练 50～100 步，所有本领都回来了；而从底座出发学这两道新题，要 400 步以上。旧本领恢复得最快：它其实没丢，只是被盖住了。</span></p>
+        <p><span lang="en">To be fair about cost: making the two pieces took 3,000 steps each. If you have to train the pieces just to combine them, training everything together is far cheaper. The saving only counts when the pieces already exist, for example taken from a shelf of ready-made skills.</span><span lang="zh-CN">但成本要说清楚：做出这两块，各花了 3,000 步。如果为了拼装专门去训练这些部件，还不如直接一起训练，便宜得多。只有部件是现成的，比如从一个"本领库"里拿来复用，这笔节省才算数。</span></p>
+      </article>
+      <article class="step">
+        <span class="step-no mono">4.5</span>
+        <h3><span lang="en">The missing rule: stay silent</span><span lang="zh-CN">最后一条规则：不是我的题就闭嘴</span></h3>
+        <p><span lang="en">So we taught each piece one more rule while it learned: on puzzles that are not yours, say nothing. The catch is that a piece cannot know what it will later be combined with, so it never saw the other piece’s puzzles. It practised staying silent on random strings of symbols instead.</span><span lang="zh-CN">于是我们在每一块学习时，再教它一条规则：不是你的题，就什么都别说。难点在于，一块部件不可能知道将来会和谁装在一起，所以它从没见过另一块的题目，只能拿随机拼凑的符号串来练习"闭嘴"。</span></p>
+        <p><span lang="en">It worked. With their own channels and this one rule, two pieces trained apart, each unaware of the other, plugged into the same model and worked exactly as well together as alone: putting them together cost nothing, and the interference vanished. Practising on random strings came within two or three points of a ceiling where each piece is allowed to practise on the other’s real puzzles. This holds under strict, hand-designed rules, in a toy model, on a single seed: it shows that bolting skills together is possible <i>given an interface like this</i>, not that any two models can be combined.</span><span lang="zh-CN">成功了。有了专用通道再加上这一条规则，两块分开训练、互不知道对方存在的部件，装进同一个模型后和单独装时完全一样好用：拼装本身没有带来任何损失，干扰也消失了。而且，只用随机符号串练习，效果离"允许直接拿对方真实题目来练"的上限只差两三个百分点。这个结果是在严格的人为规则下、在玩具模型上、用一个随机种子得到的：它说明的是<i>有了这样的接口</i>，把本领装到一起是可行的，而不是任意两个模型都能拼。</span></p>
+      </article>
+    </div>
+    <div class="stage">
+      <div class="stage-meta mono"><span class="stage-fig"></span><span lang="en">DATA: OUR EXPERIMENT</span><span lang="zh-CN">数据：本文实验</span></div>
+      <div class="stage-scenes"></div>
+    </div>
+  </div>
+</section>
+<div class="prose">
+  <h2><span lang="en">Fair warnings</span><span lang="zh-CN">需要坦白的几点</span></h2>
+  <ul>
+    <li><span lang="en"><b>Our circuit finder is rough.</b> Running it twice on the same normal model can give answers more than twice apart. It is much more consistent on sparse models.</span><span lang="zh-CN"><b>找电路的方法还很粗糙。</b>在同一个普通模型上跑两次，结果可能相差两倍多；在稀疏模型上则稳定得多。</span></li>
+    <li><span lang="en"><b>These are toy models.</b> Two layers and made-up puzzles. The direction may hold for real models; the exact numbers will not. The experiments in section 4 used a single seed.</span><span lang="zh-CN"><b>这些都是玩具模型。</b>只有两层，题目也是人造的。结论的方向也许适用于真实模型，具体数字不会。第 4 节的实验只用了一个随机种子。</span></li>
+    <li><span lang="en"><b>Smaller, not clearer.</b> We read one mechanism, and both models use it. The sparse circuit is smaller, but the normal model’s version is, if anything, a little crisper.</span><span lang="zh-CN"><b>更小，不等于更清楚。</b>我们读懂的那个机制，两种模型用的是同一个。稀疏模型的电路更小，但普通模型那一份反而更干净一点。</span></li>
+    <li><span lang="en"><b>One run failed and one setting changed.</b> One sparse model never learned the look-up puzzle well enough, and the biggest normal model needed a slower learning rate.</span><span lang="zh-CN"><b>有一次训练失败，有一处设置改动。</b>有一个稀疏模型没能把查找题学好；最大的那个普通模型需要调低学习率。</span></li>
+  </ul>
+  <h2><span lang="en">Where this could lead: a library of skills</span><span lang="zh-CN">这会通向哪里：一座“本领库”</span></h2>
+  <p><span lang="en">Removing a skill works, reading one works, and with the right interface, combining two works too. That points to a different way of building models. Today, every new ability means retraining one huge model as a whole. Instead, imagine a shared <b>base model</b> that defines the interface, and a <b>library of skill modules</b>, each trained once, on its own, by anyone. When you need a model, you pick the skills you want from the shelf and plug them in, with nothing retrained.</span><span lang="zh-CN">拆掉一项本领能做到，读懂一项本领能做到，有了合适的接口，把两项本领装到一起也做到了。这指向了一种不一样的造模型方式。今天，每增加一种能力，都要把一个巨大的模型整个重新训练一遍。换一种思路：有一个共用的<b>底座模型</b>，由它规定接口；再有一座<b>本领库</b>，里面每一个本领模块都只需单独训练一次，谁都可以来训练。需要什么样的模型，就从架子上挑出想要的本领插上去，什么都不用重新训练。</span></p>
+  <p><span lang="en">Interpretability is what makes this thinkable. You can only agree on an interface if you can see where skills live and where they clash, and every rule we added in section 4 came from looking inside: a private channel because the pieces collided in the shared one, a rule of silence because the remaining mistakes came from one piece answering the other’s questions. It is also what would make such models trustworthy: each part could be inspected, tested and swapped on its own.</span><span lang="zh-CN">让这个设想成为可能的，正是可解释性。只有看得见本领住在哪里、在哪里起冲突，才谈得上约定接口。第 4 节里我们加的每一条规则，都是看了模型内部才想出来的：开专用通道，是因为看到两块在共享通道里相撞；定下“闭嘴”规则，是因为看到剩下的错误来自一块替另一块答题。也正因为如此，这样拼出来的模型才值得信任：每一个部件都可以单独检查、单独测试、单独更换。</span></p>
+  <p><span lang="en">Others have explored nearby ideas, such as training experts separately and then merging or mixing them, usually with further training or a learned router afterwards. What we want to add is the interpretability-first route: design the interface from what we can see inside, so that the pieces fit without retraining.</span><span lang="zh-CN">也有人探索过相近的思路，比如先分开训练多个专家模型，再把它们合并或混合起来，但通常之后还要再训练，或者要另外学一个路由器来分配任务。我们想补上的，是一条从可解释性出发的路：根据在模型内部看到的东西来设计接口，让部件不用重新训练就能装上。</span></p>
+  <p><span lang="en">We are far from there. What stands in the way:</span><span lang="zh-CN">离那一天还很远。挡在路上的是这几件事：</span></p>
+  <ol>
+    <li><span lang="en"><b>Room.</b> Each module now gets its own channel, so ten modules mean a model ten times wider. Sparsity may help, since a skill only needs a few percent of the wires, but we have not shown it.</span><span lang="zh-CN"><b>空间。</b>现在每个模块独占一条通道，装十个模块，模型就要宽十倍。稀疏性也许能解决这个问题，毕竟一项本领只需要百分之几的连线，但我们还没有验证。</span></li>
+    <li><span lang="en"><b>Blurry borders.</b> Our three puzzles had nothing in common, so “not my question” was easy to tell. Real skills overlap: coding and maths both need arithmetic. Who answers then?</span><span lang="zh-CN"><b>边界模糊。</b>我们的三道题毫不相干，“不是我的题”很好判断。真实的本领彼此重叠：写代码和做数学都要用到算术。这时候该由谁来回答？</span></li>
+    <li><span lang="en"><b>Working together.</b> Real tasks need several skills at once, like reading a word problem and then doing the sum. Our interface keeps modules apart. A real library would need modules that can also call on each other, through a shared channel with an agreed format, much as functions call one another in software. That is the hardest part, and the most valuable.</span><span lang="zh-CN"><b>彼此协作。</b>真实的任务往往要同时用到几种本领，比如先读懂应用题、再算出结果。我们现在的接口是让模块彼此隔离；而一座真正的本领库，还需要模块之间能够相互调用：通过一条约定好格式的公共通道，就像软件里的函数互相调用一样。这是最难的一步，也是最有价值的一步。</span></li>
+  </ol>
+  <p><span lang="en">These are the experiments we want to run next, and we will report them here as they come in.</span><span lang="zh-CN">这些就是我们接下来要做的实验，有了结果会在这里继续报告。</span></p>
+</div>
+<section class="references">
+  <h2><span lang="en">REFERENCES</span><span lang="zh-CN">参考文献</span></h2>
+  <ol>
+    <li>Gao et al. <a href="https://arxiv.org/abs/2511.13653">“Weight-sparse transformers have interpretable circuits”</a> (2025).</li>
+    <li>Bengio, Léonard &amp; Courville. <a href="https://arxiv.org/abs/1308.3432">“Estimating or Propagating Gradients Through Stochastic Neurons for Conditional Computation”</a> (2013).</li>
+    <li>Li et al. <a href="https://arxiv.org/abs/2208.03306">“Branch-Train-Merge: Embarrassingly Parallel Training of Expert Language Models”</a> (2022).</li>
+    <li>Sukhbaatar et al. <a href="https://arxiv.org/abs/2403.07816">“Branch-Train-MiX: Mixing Expert LLMs into a Mixture-of-Experts LLM”</a> (2024).</li>
+    <li>Conmy et al. <a href="https://arxiv.org/abs/2304.14997">“Towards Automated Circuit Discovery for Mechanistic Interpretability”</a> (2023).</li>
+  </ol>
+  <p class="mono ref-note"><span lang="en">Every chart here is drawn from the experiment’s raw results (data.json, circuits.json); only the weight matrix in figure 2.1 is an illustration. Background on weight-sparse models is in our <a href="/research/methods/#m-sparse">field guide</a>.</span><span lang="zh-CN">本文所有图表都直接读取实验的原始结果（data.json、circuits.json）；只有图 2.1 中的权重矩阵是示意。权重稀疏模型的背景介绍见我们的<a href="/research/methods/#m-sparse">方法全景</a>。</span></p>
+</section>
+</main>
+
+<footer class="mono"><a class="footer-brand" href="https://sec4.si/">SEC4.SI / SECURITY FOR SI</a><span class="research-labels">INTERPRETABILITY / FEATURES / CIRCUITS</span><div class="footer-links"><a href="https://benchmark.sec4.si/">Benchmark ↗</a><a href="https://infer.sec4.si/">Infer ↗</a><span>© 2026 SEC4SI</span></div><a class="site-address" href="https://lens.sec4.si/">lens.sec4.si</a></footer>
+<script type="module" src="./article.js"></script></body></html>
