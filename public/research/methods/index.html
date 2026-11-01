@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<script>let lang; try { lang = localStorage.getItem('lang') } catch {} if (lang ? lang === 'zh' : /^zh\b/i.test(navigator.language || '')) document.documentElement.lang = 'zh-CN'</script>
+<meta name="theme-color" content="#090c09"><meta name="description" content="A plain-language field guide to fourteen interpretability methods, from probes to sparse autoencoders, with what each can and cannot do."><link rel="canonical" href="https://lens.sec4.si/research/methods/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/styles.css"><title>A Field Guide to Interpretability Methods — Lens</title></head>
+<body><a class="skip" href="#main"><span lang="en">Skip to content</span><span lang="zh-CN">跳到正文</span></a>
+<header class="site-header"><a class="brand" href="https://sec4.si/" aria-label="sec4.si home"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 5v22h7M28 5v22h-7"/><path class="slash" d="m19 6-6 20"/></svg><span>sec4<span class="dot">.</span>si</span></a><span class="project-breadcrumb mono">/ lens</span><nav aria-label="Project navigation"><a href="https://benchmark.sec4.si/">Benchmark</a><a href="https://lens.sec4.si/">Lens</a><a href="/#research" aria-current="page"><span lang="en">Research</span><span lang="zh-CN">研究</span></a><button class="lang-switch mono" type="button" aria-label="Switch language / 切换语言"><span class="en-mark">EN</span> / <span class="zh-mark">中</span></button><a class="repo-link" href="https://github.com/sec4si/lens">GitHub <svg class="arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></a></nav></header>
+
+<main id="main" class="article">
+<header class="article-head">
+  <a class="back mono" href="/#research">← <span lang="en">Research</span><span lang="zh-CN">研究</span></a>
+  <div class="eyebrow mono"><span class="cross" aria-hidden="true"></span> RESEARCH / 2026-11-01</div>
+  <h1><span lang="en">A field guide to interpretability methods</span><span lang="zh-CN">可解释性方法全景</span></h1>
+  <p class="dek"><span lang="en">Fourteen tools researchers use to look inside language models: how each one works, what it is good for, and where it falls short.</span><span lang="zh-CN">研究者用来窥探大模型内部的十四种工具：每一种怎么工作、擅长什么、又有哪些不足。</span></p>
+  <p class="byline mono">sec4si · ZacharyZcR</p>
+</header>
+
+<div class="prose">
+  <p><span lang="en">Our home page covered what interpretability is and why it matters. This article is the toolbox: the lenses researchers have built so far, and what each can and cannot see.</span><span lang="zh-CN">首页讲了可解释性是什么、为什么重要。这篇文章是一份工具清单：研究者至今造出了哪些“镜头”，每一种能看到什么、看不到什么。</span></p>
+  <p><span lang="en">We group fourteen methods into seven families by what they do to the model. Each comes with a figure you can play with, its strengths (✓), its weaknesses (✗), and our view.</span><span lang="zh-CN">我们按“对模型做了什么”，把十四种方法分成七类。每种方法都配一张可以动手的图，列出它的优点（✓）、不足（✗），以及我们的看法。</span></p>
+  <p><span lang="en">The short version: no single method can tell you what a model is thinking. Good research combines them, using decomposition to find candidates, interventions to test them, and automation to scale up.</span><span lang="zh-CN">先说结论：没有任何一种方法能单独回答“模型在想什么”。好的研究会把它们组合起来：用拆解找到候选，用干预验证因果，再用自动化扩展到整个模型。</span></p>
+</div>
+
+<div class="prose">
+  <h2><span class="mono cat-no">01</span> <span lang="en">Reading</span><span lang="zh-CN">读取</span></h2>
+  <p><span lang="en">The simplest question: is a piece of information present inside the model, and where?</span><span lang="zh-CN">最简单的问题：某个信息在不在模型里，在哪一层？</span></p>
+</div>
+<section class="scrolly-block" data-chapter="1">
+  <div class="scrolly">
+    <div class="steps">
+      <article class="step" id="m-probe">
+        <span class="step-no mono">1.1</span>
+        <h3><span lang="en">Linear probes</span><span lang="zh-CN">线性探针</span></h3>
+        <p><span lang="en">Take the activations from one layer and train a small classifier on them, for example “is this sentence positive or negative?” If the classifier succeeds, the information is stored there.</span><span lang="zh-CN">取出模型某一层的激活，在上面训练一个简单的分类器，比如判断“这句话是正面还是负面”。分类器读得出来，说明这个信息就存在那里。</span></p>
+        <ul class="pc">
+          <li class="pro"><span lang="en">Cheap and fast: minutes, not days.</span><span lang="zh-CN">便宜、快，几分钟就能跑完。</span></li>
+          <li class="pro"><span lang="en">Good for answering “does the model know X?”</span><span lang="zh-CN">适合回答“模型知不知道 X”。</span></li>
+          <li class="con"><span lang="en">Readable is not the same as used. This is correlation, not cause.</span><span lang="zh-CN">读得出来不代表模型在用它，这是相关，不是因果。</span></li>
+          <li class="con"><span lang="en">A powerful probe can learn the task itself; always run a random-label control.</span><span lang="zh-CN">探针太强会自己学会任务，必须用随机标签做对照。</span></li>
+          <li class="con"><span lang="en">It only finds concepts you already thought to look for.</span><span lang="zh-CN">只能找到你事先想到的概念。</span></li>
+        </ul>
+        <p class="verdict"><b><span lang="en">Our view</span><span lang="zh-CN">我们的看法</span></b><span lang="en">A good first screening tool. Never treat probe accuracy as the conclusion.</span><span lang="zh-CN">很好的初筛工具，但别把探针的准确率当成结论。</span></p>
+      </article>
+      <article class="step" id="m-lens">
+        <span class="step-no mono">1.2</span>
+        <h3><span lang="en">Logit lens and tuned lens</span><span lang="zh-CN">Logit lens 与 Tuned lens</span></h3>
+        <p><span lang="en">Send a middle layer’s activations straight to the model’s output layer and ask: if the model stopped here, what would it say? The tuned lens adds a small learned translator per layer, which makes the readings more reliable.</span><span lang="zh-CN">把中间层的激活直接送进模型最后的输出层，看“如果模型在这一层就停下来，会说什么”。Tuned lens 为每一层额外训练一个小翻译器，让读数更可靠。</span></p>
+        <ul class="pc">
+          <li class="pro"><span lang="en">Almost free: the logit lens needs no training at all.</span><span lang="zh-CN">几乎零成本，logit lens 完全不需要训练。</span></li>
+          <li class="pro"><span lang="en">Shows at a glance where in the model an answer takes shape.</span><span lang="zh-CN">一眼看出答案是在哪一层成形的。</span></li>
+          <li class="con"><span lang="en">Middle layers do not quite speak the output layer’s language; on some models (such as BLOOM and GPT-Neo) the logit lens fails outright.</span><span lang="zh-CN">中间层和输出层“说的不是同一种语言”，在一些模型上（比如 BLOOM、GPT-Neo）logit lens 会直接失效。</span></li>
+          <li class="con"><span lang="en">It shows what the model is about to say, not why.</span><span lang="zh-CN">只看到模型“想说什么”，看不到“为什么这么想”。</span></li>
+        </ul>
+        <p class="verdict"><b><span lang="en">Our view</span><span lang="zh-CN">我们的看法</span></b><span lang="en">Great for debugging and building intuition, not for claims about mechanism.</span><span lang="zh-CN">调试和建立直觉的好工具，不适合拿来下机制层面的结论。</span></p>
+      </article>
+    </div>
+    <div class="stage">
+      <div class="stage-meta mono"><span class="stage-fig"></span><span lang="en">SCHEMATIC</span><span lang="zh-CN">示意</span></div>
+      <div class="stage-scenes"></div>
+    </div>
+  </div>
+</section>
+
+<div class="prose">
+  <h2><span class="mono cat-no">02</span> <span lang="en">Attribution</span><span lang="zh-CN">归因</span></h2>
+  <p><span lang="en">Which parts of the input does the output depend on?</span><span lang="zh-CN">输出依赖于输入里的哪些部分？</span></p>
+</div>
+<section class="scrolly-block" data-chapter="2">
+  <div class="scrolly">
+    <div class="steps">
+      <article class="step" id="m-saliency">
+        <span class="step-no mono">2.1</span>
+        <h3><span lang="en">Saliency maps and attention</span><span lang="zh-CN">显著性图与注意力</span></h3>
+        <p><span lang="en">Score every input word by how much it contributes to the output, usually with gradients (such as integrated gradients), or simply by reading the attention weights.</span><span lang="zh-CN">给输入的每个词打分，看它对输出贡献多大。常见做法是算梯度（比如积分梯度），或者直接读注意力权重。</span></p>
+        <ul class="pc">
+          <li class="pro"><span lang="en">Works on any input, cheaply.</span><span lang="zh-CN">任何输入都能算，成本低。</span></li>
+          <li class="pro"><span lang="en">The result is a heat map anyone can read.</span><span lang="zh-CN">结果是一张热力图，谁都看得懂。</span></li>
+          <li class="con"><span lang="en">Attention weights often disagree with how much a word really matters.</span><span lang="zh-CN">注意力权重和一个词的真实重要性常常对不上。</span></li>
+          <li class="con"><span lang="en">Some saliency methods give nearly the same map after the model’s weights are randomized (shown on image models).</span><span lang="zh-CN">有些显著性方法在模型权重被随机打乱后，给出的图几乎一样（已在图像模型上证实）。</span></li>
+          <li class="con"><span lang="en">It says where the model looked, not what it did with it.</span><span lang="zh-CN">只告诉你模型“看了哪里”，不告诉你“怎么用的”。</span></li>
+        </ul>
+        <p class="verdict"><b><span lang="en">Our view</span><span lang="zh-CN">我们的看法</span></b><span lang="en">The prettiest output and the most misleading. Run a randomization check before trusting it.</span><span lang="zh-CN">最好看，也最容易误导人。用之前先做随机化检验。</span></p>
+      </article>
+    </div>
+    <div class="stage">
+      <div class="stage-meta mono"><span class="stage-fig"></span><span lang="en">SCHEMATIC</span><span lang="zh-CN">示意</span></div>
+      <div class="stage-scenes"></div>
+    </div>
+  </div>
+</section>
+
+<div class="prose">
+  <h2><span class="mono cat-no">03</span> <span lang="en">Intervening</span><span lang="zh-CN">干预</span></h2>
+  <p><span lang="en">Change something inside the model and watch what happens. This is how correlation becomes cause.</span><span lang="zh-CN">改动模型内部的某处，观察会发生什么。相关性就是这样变成因果的。</span></p>
+</div>
+<section class="scrolly-block" data-chapter="3">
+  <div class="scrolly">
+    <div class="steps">
+      <article class="step" id="m-patching">
+        <span class="step-no mono">3.1</span>
+        <h3><span lang="en">Activation patching</span><span lang="zh-CN">激活修补</span></h3>
+        <p><span lang="en">Run the model twice: once normally (“Eiffel Tower is in” → Paris) and once with the subject blurred. Copy one activation from the good run into the broken one and see how much of the answer comes back. Where it comes back, the information lives.</span><span lang="zh-CN">让模型跑两次：一次正常（“埃菲尔铁塔位于” → 巴黎），一次把主语弄模糊。把正常那次某一层、某个位置的激活复制到坏的那次里，看答案能恢复多少。恢复得多的地方，就是关键信息所在。</span></p>
+        <ul class="pc">
+          <li class="pro"><span lang="en">Gives causal evidence, not just correlation.</span><span lang="zh-CN">给出因果证据，而不只是相关性。</span></li>
+          <li class="pro"><span lang="en">Pinpoints the exact layer and position.</span><span lang="zh-CN">能精确定位到层和位置。</span></li>
+          <li class="con"><span lang="en">Every cell is another run of the model; cost grows with size.</span><span lang="zh-CN">每个格子都要重新跑一次模型，代价随规模增长。</span></li>
+          <li class="con"><span lang="en">How you break the input and what you measure can change the conclusion.</span><span lang="zh-CN">怎么“弄坏”输入、用什么指标衡量，都会改变结论。</span></li>
+          <li class="con"><span lang="en">You need a hypothesis first: which two runs to compare.</span><span lang="zh-CN">需要先有假设，知道要比较哪两次运行。</span></li>
+        </ul>
+        <p class="verdict"><b><span lang="en">Our view</span><span lang="zh-CN">我们的看法</span></b><span lang="en">The gold standard for testing a hypothesis. Almost every serious claim about mechanism should pass through it.</span><span lang="zh-CN">验证假设的金标准。几乎所有严肃的机制结论都应该经过它的检验。</span></p>
+      </article>
+      <article class="step" id="m-steering">
+        <span class="step-no mono">3.2</span>
+        <h3><span lang="en">Steering vectors</span><span lang="zh-CN">引导向量</span></h3>
+        <p><span lang="en">Find a direction that stands for some property, for example the difference between formal and casual activations, and add it to the activations while the model runs. Its behavior bends that way.</span><span lang="zh-CN">找到代表某种性质的方向，比如“正式”与“随意”两种激活的差，在模型运行时把它加进激活里，模型的行为就会朝那个方向偏。</span></p>
+        <ul class="pc">
+          <li class="pro"><span lang="en">No training: adjust one number.</span><span lang="zh-CN">不需要训练，调一个数就行。</span></li>
+          <li class="pro"><span lang="en">Proves a direction really affects behavior.</span><span lang="zh-CN">能证明这个方向确实影响行为。</span></li>
+          <li class="con"><span lang="en">Push too hard and general ability drops; at the extreme, the model produces nonsense.</span><span lang="zh-CN">推得太狠，模型的通用能力会下降，极端时开始胡言乱语。</span></li>
+          <li class="con"><span lang="en">One direction rarely changes just one thing; side effects are hard to predict.</span><span lang="zh-CN">一个方向往往不止改变一件事，副作用难以预测。</span></li>
+          <li class="con"><span lang="en">You have to know what you are looking for to find the direction.</span><span lang="zh-CN">要先知道找什么，才能找到这个方向。</span></li>
+        </ul>
+        <p class="verdict"><b><span lang="en">Our view</span><span lang="zh-CN">我们的看法</span></b><span lang="en">A practical control, and a good test of what a feature means. But it is a knob, not an explanation.</span><span lang="zh-CN">实用的控制手段，也是检验特征含义的好办法。但它是旋钮，不是解释。</span></p>
+      </article>
+    </div>
+    <div class="stage">
+      <div class="stage-meta mono"><span class="stage-fig"></span><span lang="en">SCHEMATIC</span><span lang="zh-CN">示意</span></div>
+      <div class="stage-scenes"></div>
+    </div>
+  </div>
+</section>
+
+<div class="prose">
+  <h2><span class="mono cat-no">04</span> <span lang="en">Decomposing</span><span lang="zh-CN">拆解</span></h2>
+  <p><span lang="en">Split the model’s tangled activations into parts that each mean one thing, without deciding in advance what those things are.</span><span lang="zh-CN">把模型缠在一起的激活拆成一个个只代表一件事的部分，而且不需要事先决定要找什么。</span></p>
+</div>
+<section class="scrolly-block" data-chapter="4">
+  <div class="scrolly">
+    <div class="steps">
+      <article class="step" id="m-sae">
+        <span class="step-no mono">4.1</span>
+        <h3><span lang="en">Sparse autoencoders (SAEs)</span><span lang="zh-CN">稀疏自编码器（SAE）</span></h3>
+        <p><span lang="en">Train a dictionary that rewrites one layer’s activations as a combination of many features, with the rule that only a few may be on at once. Under that pressure, each feature tends to mean one thing.</span><span lang="zh-CN">训练一本“字典”，把一层的激活改写成许多特征的组合，并规定每次只能有少数几个特征亮起。在这个约束下，每个特征往往只对应一个概念。</span></p>
+        <ul class="pc">
+          <li class="pro"><span lang="en">No need to know what to look for: it finds the unexpected.</span><span lang="zh-CN">不需要预先知道找什么，能发现意料之外的概念。</span></li>
+          <li class="pro"><span lang="en">Already scaled to production models, with tens of millions of features.</span><span lang="zh-CN">已经扩展到生产级大模型，特征数达到数千万。</span></li>
+          <li class="pro"><span lang="en">Features can be used directly to steer the model.</span><span lang="zh-CN">特征可以直接用来引导模型。</span></li>
+          <li class="con"><span lang="en">Part of every activation is never reconstructed: the “dark matter”.</span><span lang="zh-CN">总有一部分激活重建不出来，这部分就是“暗物质”。</span></li>
+          <li class="con"><span lang="en">Features split and absorb one another; change the dictionary size and the answer changes.</span><span lang="zh-CN">特征会分裂、会互相“吞并”，换个字典大小，结果就不同。</span></li>
+          <li class="con"><span lang="en">On some practical tasks, Google DeepMind found SAEs did worse than plain linear probes.</span><span lang="zh-CN">在一些实际任务上，Google DeepMind 发现 SAE 还不如普通的线性探针。</span></li>
+        </ul>
+        <p class="verdict"><b><span lang="en">Our view</span><span lang="zh-CN">我们的看法</span></b><span lang="en">The most important discovery tool today, but it produces candidates, not answers. Every important feature still needs an intervention to confirm it.</span><span lang="zh-CN">目前最重要的“发现”工具，但它给出的是候选，不是答案。每个重要特征都还需要干预来验证。</span></p>
+      </article>
+      <article class="step" id="m-transcoder">
+        <span class="step-no mono">4.2</span>
+        <h3><span lang="en">Transcoders</span><span lang="zh-CN">Transcoder</span></h3>
+        <p><span lang="en">An SAE decomposes a layer’s state; a transcoder decomposes a layer’s computation, imitating an MLP’s input-to-output map with sparse features. The cross-layer version lets one feature write into many later layers.</span><span lang="zh-CN">SAE 拆的是一层的状态，transcoder 拆的是一层的计算：用稀疏特征去模仿 MLP 从输入到输出的映射。跨层版本允许一个特征同时写入后面的多层。</span></p>
+        <ul class="pc">
+          <li class="pro"><span lang="en">Connections between features do not depend on the input, so they form circuits directly.</span><span lang="zh-CN">特征之间的连接与具体输入无关，可以直接连成电路。</span></li>
+          <li class="pro"><span lang="en">One study found transcoder features easier to interpret than SAE features.</span><span lang="zh-CN">有研究发现，它的特征比 SAE 的更好解释。</span></li>
+          <li class="con"><span lang="en">However good the imitation, it is a stand-in: right outputs can come from a different mechanism.</span><span lang="zh-CN">模仿得再像也是替身：输出对了，内部机制可能和原模型不一样。</span></li>
+          <li class="con"><span lang="en">Attention is not decomposed.</span><span lang="zh-CN">注意力层的计算没有被拆开。</span></li>
+          <li class="con"><span lang="en">More expensive to train than SAEs.</span><span lang="zh-CN">训练成本比 SAE 更高。</span></li>
+        </ul>
+        <p class="verdict"><b><span lang="en">Our view</span><span lang="zh-CN">我们的看法</span></b><span lang="en">The key step from finding features to drawing circuits. Attribution graphs are built on it.</span><span lang="zh-CN">从“找特征”走向“画电路”的关键一步，归因图就建立在它之上。</span></p>
+      </article>
+      <article class="step" id="m-crosscoder">
+        <span class="step-no mono">4.3</span>
+        <h3><span lang="en">Crosscoders</span><span lang="zh-CN">Crosscoder</span></h3>
+        <p><span lang="en">Give two models, say a base model and its chat version, one shared dictionary. Then compare feature by feature: which are shared, and which appeared after fine-tuning?</span><span lang="zh-CN">让两个模型（比如基座模型和它的对话版）共用一本特征字典，然后逐个特征对比：哪些是共有的，哪些是微调之后新出现的。</span></p>
+        <ul class="pc">
+          <li class="pro"><span lang="en">A diff for models: see what fine-tuning changed.</span><span lang="zh-CN">给模型做 diff，直接看出微调改变了什么。</span></li>
+          <li class="pro"><span lang="en">Useful for checking whether safety training really took hold.</span><span lang="zh-CN">适合检查安全训练是否真的生效。</span></li>
+          <li class="con"><span lang="en">The training objective can mislabel concepts both models share as new.</span><span lang="zh-CN">训练目标可能把两个模型共有的概念误标成“新出现的”。</span></li>
+          <li class="con"><span lang="en">Covers two models at once, so it costs more.</span><span lang="zh-CN">要同时覆盖两个模型，成本更高。</span></li>
+        </ul>
+        <p class="verdict"><b><span lang="en">Our view</span><span lang="zh-CN">我们的看法</span></b><span lang="en">The beginning of version control for models. Promising, but every diff still needs a human check.</span><span lang="zh-CN">模型版本管理的雏形，很有前景，但目前每条 diff 都需要人工复核。</span></p>
+      </article>
+    </div>
+    <div class="stage">
+      <div class="stage-meta mono"><span class="stage-fig"></span><span lang="en">SCHEMATIC</span><span lang="zh-CN">示意</span></div>
+      <div class="stage-scenes"></div>
+    </div>
+  </div>
+</section>
+
+<div class="prose">
+  <h2><span class="mono cat-no">05</span> <span lang="en">Tracing circuits</span><span lang="zh-CN">追踪电路</span></h2>
+  <p><span lang="en">Go beyond single features and work out the full chain of steps behind a behavior.</span><span lang="zh-CN">不止看单个特征，而是弄清一个行为背后完整的计算链条。</span></p>
+</div>
+<section class="scrolly-block" data-chapter="5">
+  <div class="scrolly">
+    <div class="steps">
+      <article class="step" id="m-ioi">
+        <span class="step-no mono">5.1</span>
+        <h3><span lang="en">Manual circuit analysis</span><span lang="zh-CN">人工电路分析</span></h3>
+        <p><span lang="en">Pick one task and find every component responsible for it, one by one, until you know what each does. The classic example is the indirect-object circuit in GPT-2 small: 26 attention heads in 7 classes work together to complete “When Mary and John went to the store, John gave a drink to” with “Mary”.</span><span lang="zh-CN">选一个具体任务，把负责它的组件一个个找出来，直到弄清每一个在做什么。经典例子是 GPT-2 small 里的“间接宾语识别”电路：26 个注意力头分成 7 类，协同完成“玛丽和约翰去了商店，约翰把饮料递给了……”这道题，答出“玛丽”。</span></p>
+        <ul class="pc">
+          <li class="pro"><span lang="en">Produces a complete, testable mechanism.</span><span lang="zh-CN">能给出完整、可检验的机制。</span></li>
+          <li class="pro"><span lang="en">Proved that fully understanding a task is possible.</span><span lang="zh-CN">证明了“读懂一个任务”是做得到的。</span></li>
+          <li class="con"><span lang="en">Enormously labor-intensive.</span><span lang="zh-CN">极其耗费人力。</span></li>
+          <li class="con"><span lang="en">Only achieved on small models and narrow tasks.</span><span lang="zh-CN">只在小模型、窄任务上做到过。</span></li>
+        </ul>
+        <p class="verdict"><b><span lang="en">Our view</span><span lang="zh-CN">我们的看法</span></b><span lang="en">The field’s proof of concept: it shows what the goal looks like, but this way of working cannot scale.</span><span lang="zh-CN">这个领域的“概念验证”。它告诉我们目标长什么样，但这种做法本身无法规模化。</span></p>
+      </article>
+      <article class="step" id="m-acdc">
+        <span class="step-no mono">5.2</span>
+        <h3><span lang="en">Automatic circuit discovery</span><span lang="zh-CN">自动电路发现</span></h3>
+        <p><span lang="en">Treat the model as a graph and delete connections automatically: any connection whose removal barely changes the output goes. What remains is the circuit. On a known GPT-2 small task it kept 68 of 32,000 connections, every one of them previously found by hand.</span><span lang="zh-CN">把模型看成一张计算图，自动地逐条删除连接：删掉后输出几乎不变的连接就去掉，最后剩下的就是电路。在 GPT-2 small 的一个已知任务上，它从 32,000 条连接里只保留了 68 条，全部是人工研究早已找到的。</span></p>
+        <ul class="pc">
+          <li class="pro"><span lang="en">Automates what took people months.</span><span lang="zh-CN">把人工几个月的工作自动化。</span></li>
+          <li class="pro"><span lang="en">Recovers circuits that people found by hand.</span><span lang="zh-CN">能找回人工发现过的电路。</span></li>
+          <li class="con"><span lang="en">Each task still needs hand-designed contrast inputs and a metric.</span><span lang="zh-CN">每个任务仍然要人工设计对照输入和指标。</span></li>
+          <li class="con"><span lang="en">The result depends on where you set the threshold.</span><span lang="zh-CN">结果取决于阈值怎么定。</span></li>
+          <li class="con"><span lang="en">Expensive on large models.</span><span lang="zh-CN">在大模型上计算量很大。</span></li>
+        </ul>
+        <p class="verdict"><b><span lang="en">Our view</span><span lang="zh-CN">我们的看法</span></b><span lang="en">Turns manual circuit analysis into an engineering problem, but someone still has to define the task.</span><span lang="zh-CN">把人工电路分析变成了工程问题，但仍然需要有人先定义任务。</span></p>
+      </article>
+      <article class="step" id="m-graph">
+        <span class="step-no mono">5.3</span>
+        <h3><span lang="en">Attribution graphs</span><span lang="zh-CN">归因图</span></h3>
+        <p><span lang="en">Build a readable stand-in model from cross-layer transcoders, then draw the full computation for one prompt: which features caused which, all the way to the answer.</span><span lang="zh-CN">先用跨层 transcoder 搭一个可读的替代模型，再为一个具体提示词画出完整的计算图：哪些特征促成了哪些特征，一直到答案。</span></p>
+        <ul class="pc">
+          <li class="pro"><span lang="en">No task to define in advance: works on any prompt.</span><span lang="zh-CN">不需要预先定义任务，任何提示词都能画。</span></li>
+          <li class="pro"><span lang="en">Has revealed planning and multi-step reasoning inside production models.</span><span lang="zh-CN">已经在生产级模型里发现了提前规划、多步推理等机制。</span></li>
+          <li class="pro"><span lang="en">The tools are open source.</span><span lang="zh-CN">工具已经开源。</span></li>
+          <li class="con"><span lang="en">By the authors’ estimate, only about a quarter of prompts give a satisfying explanation.</span><span lang="zh-CN">按作者自己的估计，只有大约四分之一的提示词能得到令人满意的解释。</span></li>
+          <li class="con"><span lang="en">Error nodes mark computation that cannot be explained.</span><span lang="zh-CN">图里有解释不了的误差节点。</span></li>
+          <li class="con"><span lang="en">Reading one graph takes hours.</span><span lang="zh-CN">读懂一张图要花好几个小时。</span></li>
+        </ul>
+        <p class="verdict"><b><span lang="en">Our view</span><span lang="zh-CN">我们的看法</span></b><span lang="en">The closest thing we have to a microscope. The next steps are smaller errors and automated reading.</span><span lang="zh-CN">目前最接近“显微镜”的工具。接下来的关键是降低误差、让读图自动化。</span></p>
+      </article>
+    </div>
+    <div class="stage">
+      <div class="stage-meta mono"><span class="stage-fig"></span><span lang="en">SCHEMATIC</span><span lang="zh-CN">示意</span></div>
+      <div class="stage-scenes"></div>
+    </div>
+  </div>
+</section>
+
+<div class="prose">
+  <h2><span class="mono cat-no">06</span> <span lang="en">Automating and self-report</span><span lang="zh-CN">自动化与自述</span></h2>
+  <p><span lang="en">There are millions of features and far too few researchers. Can models help explain models?</span><span lang="zh-CN">特征有上百万个，研究者却远远不够。能不能让模型来帮忙解释模型？</span></p>
+</div>
+<section class="scrolly-block" data-chapter="6">
+  <div class="scrolly">
+    <div class="steps">
+      <article class="step" id="m-autointerp">
+        <span class="step-no mono">6.1</span>
+        <h3><span lang="en">Automated explanations</span><span lang="zh-CN">自动解释</span></h3>
+        <p><span lang="en">An LLM reads the examples that most strongly activate a feature and writes a one-line explanation. It is then scored on how well that explanation predicts the feature on new text. OpenAI ran this on all 307,200 neurons in GPT-2 XL; just over 1,000 got explanations scoring 0.8 or higher.</span><span lang="zh-CN">让一个大模型阅读某个特征激活最强的样例，写出一句解释；再看这句解释能不能预测这个特征在新文本上的激活，以此打分。OpenAI 用它解释了 GPT-2 XL 全部 307,200 个神经元，得分达到 0.8 以上的只有一千多个。</span></p>
+        <ul class="pc">
+          <li class="pro"><span lang="en">Scales to millions of features.</span><span lang="zh-CN">可以扩展到上百万个特征。</span></li>
+          <li class="pro"><span lang="en">Gives a measurable score.</span><span lang="zh-CN">给出可量化的分数。</span></li>
+          <li class="con"><span lang="en">Most explanations do not score well.</span><span lang="zh-CN">大多数解释得分不高。</span></li>
+          <li class="con"><span lang="en">Explanations tend to be vague or describe only the surface.</span><span lang="zh-CN">解释往往笼统，或者只描述了表面。</span></li>
+          <li class="con"><span lang="en">The explainer is itself a black box.</span><span lang="zh-CN">负责解释的模型本身也是黑箱。</span></li>
+        </ul>
+        <p class="verdict"><b><span lang="en">Our view</span><span lang="zh-CN">我们的看法</span></b><span lang="en">Essential infrastructure; there is no other way to handle millions of features. A low-scoring explanation is not a fact.</span><span lang="zh-CN">必不可少的基础设施，没有它就处理不了上百万个特征。但得分低的解释不能当成事实。</span></p>
+      </article>
+      <article class="step" id="m-selfreport">
+        <span class="step-no mono">6.2</span>
+        <h3><span lang="en">Self-report</span><span lang="zh-CN">模型自述</span></h3>
+        <p><span lang="en">Train or prompt a model to describe its own internal states in plain language. To test it, inject a concept into its activations and ask whether it notices. In Anthropic’s 2025 experiments, Claude Opus 4 and 4.1 noticed injected concepts about 20% of the time under the best settings.</span><span lang="zh-CN">训练或引导模型直接用自然语言描述自己的内部状态。检验的办法是往它的激活里注入一个概念，问它有没有察觉。在 Anthropic 2025 年的实验里，Claude Opus 4 和 4.1 在最合适的设置下，大约 20% 的时候能察觉到被注入的概念。</span></p>
+        <ul class="pc">
+          <li class="pro"><span lang="en">The output is plain language: no expert needed to read it.</span><span lang="zh-CN">输出就是人话，不需要专家读图。</span></li>
+          <li class="pro"><span lang="en">You can ask it anything, not just the questions you planned for.</span><span lang="zh-CN">可以问任何问题，而不只是事先设计好的那些。</span></li>
+          <li class="con"><span lang="en">Models notice injected concepts only some of the time.</span><span lang="zh-CN">模型只在一部分情况下能察觉注入的概念。</span></li>
+          <li class="con"><span lang="en">Models can confabulate; every self-report needs independent checking.</span><span lang="zh-CN">模型可能编造，每一次自述都需要独立验证。</span></li>
+        </ul>
+        <p class="verdict"><b><span lang="en">Our view</span><span lang="zh-CN">我们的看法</span></b><span lang="en">The direction to watch in 2026. If self-reports can be verified reliably, interpretability can finally scale.</span><span lang="zh-CN">2026 年最值得关注的方向。如果自述能被可靠地验证，可解释性就真正能规模化了。</span></p>
+      </article>
+    </div>
+    <div class="stage">
+      <div class="stage-meta mono"><span class="stage-fig"></span><span lang="en">SCHEMATIC</span><span lang="zh-CN">示意</span></div>
+      <div class="stage-scenes"></div>
+    </div>
+  </div>
+</section>
+
+<div class="prose">
+  <h2><span class="mono cat-no">07</span> <span lang="en">Interpretable by design</span><span lang="zh-CN">从设计上可解释</span></h2>
+  <p><span lang="en">Instead of taking a finished model apart, build one that is easier to read from the start.</span><span lang="zh-CN">与其事后拆解训练好的模型，不如从一开始就造一个更容易读懂的模型。</span></p>
+</div>
+<section class="scrolly-block" data-chapter="7">
+  <div class="scrolly">
+    <div class="steps">
+      <article class="step" id="m-sparse">
+        <span class="step-no mono">7.1</span>
+        <h3><span lang="en">Weight-sparse models</span><span lang="zh-CN">权重稀疏模型</span></h3>
+        <p><span lang="en">Train the model so that almost all of its weights are zero. Each task then runs on a small circuit that can be read directly. OpenAI found these circuits roughly 16 times smaller than in ordinary models at the same performance.</span><span lang="zh-CN">训练时让模型几乎所有的权重都为零，这样每个任务只用到一个小电路，可以直接读懂。OpenAI 发现，在同等性能下，这类模型的电路比普通模型小约 16 倍。</span></p>
+        <ul class="pc">
+          <li class="pro"><span lang="en">Smaller, cleaner circuits, with no stand-in model.</span><span lang="zh-CN">电路更小、更干净，不需要替代模型。</span></li>
+          <li class="pro"><span lang="en">The explanation is the model itself, so there is no imitation error.</span><span lang="zh-CN">解释的就是模型本身，不存在“替身”误差。</span></li>
+          <li class="con"><span lang="en">Inefficient and expensive to train.</span><span lang="zh-CN">训练效率低、成本高。</span></li>
+          <li class="con"><span lang="en">So far only small models, far below frontier capability.</span><span lang="zh-CN">目前只在小模型上做到，能力远不及前沿模型。</span></li>
+          <li class="con"><span lang="en">Cannot explain models that already exist.</span><span lang="zh-CN">无法用来解释已经训练好的现有模型。</span></li>
+        </ul>
+        <p class="verdict"><b><span lang="en">Our view</span><span lang="zh-CN">我们的看法</span></b><span lang="en">Possibly the most fundamental path in the long run; for now, a research tool.</span><span lang="zh-CN">长远看可能是最根本的路线，短期内只是研究工具。</span></p>
+      </article>
+    </div>
+    <div class="stage">
+      <div class="stage-meta mono"><span class="stage-fig"></span><span lang="en">SCHEMATIC</span><span lang="zh-CN">示意</span></div>
+      <div class="stage-scenes"></div>
+    </div>
+  </div>
+</section>
+
+<div class="prose">
+  <h2><span lang="en">Side by side</span><span lang="zh-CN">放在一起比较</span></h2>
+  <p><span lang="en">Our own rough assessment, out of three. Click a column to sort by it; click a method to jump back to it.</span><span lang="zh-CN">这是我们的主观评估，满分三个点。点击表头按该项排序，点击方法名跳回对应章节。</span></p>
+</div>
+<div class="compare-wrap"><table class="compare"></table></div>
+
+<div class="prose">
+  <h2><span lang="en">What we take from this</span><span lang="zh-CN">我们的结论</span></h2>
+  <ol>
+    <li><span lang="en"><b>There is no silver bullet.</b> Reading and attribution are cheap but only show correlation. Interventions show cause but need a hypothesis. Decomposition finds the unknown but is incomplete.</span><span lang="zh-CN"><b>没有银弹。</b>读取和归因便宜，但只能给出相关性；干预能给出因果，但需要先有假设；拆解能发现未知，但并不完整。</span></li>
+    <li><span lang="en"><b>Combine them.</b> Decompose to find candidates, intervene to confirm, automate to scale.</span><span lang="zh-CN"><b>组合起来用。</b>用拆解找候选，用干预做验证，用自动化做扩展。</span></li>
+    <li><span lang="en"><b>The bottleneck is scale.</b> People cannot read fast enough. Whether automated explanations and self-report can be trusted will decide whether interpretability keeps up with the models.</span><span lang="zh-CN"><b>瓶颈在规模。</b>人读不过来。自动解释和模型自述能不能被信任，决定了可解释性能不能跟上模型的发展。</span></li>
+  </ol>
+  <p><span lang="en">In the articles that follow, we will pick up these methods and use them on real models.</span><span lang="zh-CN">接下来的文章里，我们会拿起这些方法，在真实的模型上动手做。</span></p>
+</div>
+
+<section class="references">
+  <h2><span lang="en">REFERENCES</span><span lang="zh-CN">参考文献</span></h2>
+  <h3 class="mono">Linear probes / 线性探针</h3>
+  <ol>
+    <li>Hewitt & Liang. <a href="https://arxiv.org/abs/1909.03368">“Designing and Interpreting Probes with Control Tasks”</a> (2019).</li>
+  </ol>
+  <h3 class="mono">Logit lens, tuned lens</h3>
+  <ol>
+    <li>nostalgebraist. <a href="https://www.lesswrong.com/posts/AcKRB8wDpdaN6v6ru/interpreting-gpt-the-logit-lens">“interpreting GPT: the logit lens”</a> (2020).</li>
+    <li>Belrose et al.. <a href="https://arxiv.org/abs/2303.08112">“Eliciting Latent Predictions from Transformers with the Tuned Lens”</a> (2023).</li>
+  </ol>
+  <h3 class="mono">Saliency, attention / 显著性与注意力</h3>
+  <ol>
+    <li>Sundararajan et al.. <a href="https://arxiv.org/abs/1703.01365">“Axiomatic Attribution for Deep Networks”</a> (2017).</li>
+    <li>Adebayo et al.. <a href="https://arxiv.org/abs/1810.03292">“Sanity Checks for Saliency Maps”</a> (2018).</li>
+    <li>Jain & Wallace. <a href="https://arxiv.org/abs/1902.10186">“Attention is not Explanation”</a> (2019).</li>
+  </ol>
+  <h3 class="mono">Activation patching / 激活修补</h3>
+  <ol>
+    <li>Meng et al.. <a href="https://arxiv.org/abs/2202.05262">“Locating and Editing Factual Associations in GPT”</a> (2022).</li>
+    <li>Zhang & Nanda. <a href="https://arxiv.org/abs/2309.16042">“Towards Best Practices of Activation Patching in Language Models”</a> (2023).</li>
+    <li>Heimersheim & Nanda. <a href="https://arxiv.org/abs/2404.15255">“How to use and interpret activation patching”</a> (2024).</li>
+  </ol>
+  <h3 class="mono">Steering / 引导向量</h3>
+  <ol>
+    <li>Turner et al.. <a href="https://arxiv.org/abs/2308.10248">“Steering Language Models With Activation Engineering”</a> (2023).</li>
+    <li>Zou et al.. <a href="https://arxiv.org/abs/2310.01405">“Representation Engineering”</a> (2023).</li>
+    <li>Chen et al.. <a href="https://arxiv.org/abs/2507.21509">“Persona Vectors”</a> (2025).</li>
+  </ol>
+  <h3 class="mono">Sparse autoencoders / 稀疏自编码器</h3>
+  <ol>
+    <li>Elhage et al.. <a href="https://transformer-circuits.pub/2022/toy_model/index.html">“Toy Models of Superposition”</a> (2022).</li>
+    <li>Bricken et al.. <a href="https://transformer-circuits.pub/2023/monosemantic-features/index.html">“Towards Monosemanticity”</a> (2023).</li>
+    <li>Cunningham et al.. <a href="https://arxiv.org/abs/2309.08600">“Sparse Autoencoders Find Highly Interpretable Features in Language Models”</a> (2023).</li>
+    <li>Templeton et al.. <a href="https://transformer-circuits.pub/2024/scaling-monosemanticity/">“Scaling Monosemanticity”</a> (2024).</li>
+    <li>Gao et al.. <a href="https://arxiv.org/abs/2406.04093">“Scaling and evaluating sparse autoencoders”</a> (2024).</li>
+    <li>Lieberum et al.. <a href="https://arxiv.org/abs/2408.05147">“Gemma Scope”</a> (2024).</li>
+    <li>Chanin et al.. <a href="https://arxiv.org/abs/2409.14507">“A is for Absorption”</a> (2024).</li>
+    <li>Engels et al.. <a href="https://arxiv.org/abs/2410.14670">“Decomposing The Dark Matter of Sparse Autoencoders”</a> (2024).</li>
+    <li>Smith et al. (Google DeepMind). <a href="https://www.alignmentforum.org/posts/4uXCAJNuPKtKBsi28/negative-results-for-saes-on-downstream-tasks">“Negative Results for SAEs On Downstream Tasks and Deprioritising SAE Research”</a> (2025).</li>
+  </ol>
+  <h3 class="mono">Transcoders</h3>
+  <ol>
+    <li>Dunefsky et al.. <a href="https://arxiv.org/abs/2406.11944">“Transcoders Find Interpretable LLM Feature Circuits”</a> (2024).</li>
+    <li>Paulo et al.. <a href="https://arxiv.org/abs/2501.18823">“Transcoders Beat Sparse Autoencoders for Interpretability”</a> (2025).</li>
+    <li>Olah. <a href="https://transformer-circuits.pub/2025/faithfulness-toy-model/index.html">“A Toy Model of Mechanistic (Un)Faithfulness”</a> (2025).</li>
+  </ol>
+  <h3 class="mono">Crosscoders</h3>
+  <ol>
+    <li>Lindsey et al.. <a href="https://transformer-circuits.pub/2024/crosscoders/index.html">“Sparse Crosscoders for Cross-Layer Features and Model Diffing”</a> (2024).</li>
+    <li>Minder et al.. <a href="https://arxiv.org/abs/2504.02922">“Overcoming Sparsity Artifacts in Crosscoders to Interpret Chat-Tuning”</a> (2025).</li>
+  </ol>
+  <h3 class="mono">Circuits / 电路</h3>
+  <ol>
+    <li>Wang et al.. <a href="https://arxiv.org/abs/2211.00593">“Interpretability in the Wild: a Circuit for Indirect Object Identification in GPT-2 small”</a> (2022).</li>
+    <li>Conmy et al.. <a href="https://arxiv.org/abs/2304.14997">“Towards Automated Circuit Discovery for Mechanistic Interpretability”</a> (2023).</li>
+    <li>Ameisen et al.. <a href="https://transformer-circuits.pub/2025/attribution-graphs/methods.html">“Circuit Tracing: Revealing Computational Graphs in Language Models”</a> (2025).</li>
+    <li>Lindsey et al.. <a href="https://transformer-circuits.pub/2025/attribution-graphs/biology.html">“On the Biology of a Large Language Model”</a> (2025).</li>
+    <li>Anthropic. <a href="https://www.anthropic.com/research/open-source-circuit-tracing">“Open-sourcing circuit tracing tools”</a> (2025).</li>
+  </ol>
+  <h3 class="mono">Automation, self-report / 自动化与自述</h3>
+  <ol>
+    <li>Bills et al.. <a href="https://openaipublic.blob.core.windows.net/neuron-explainer/paper/index.html">“Language models can explain neurons in language models”</a> (2023).</li>
+    <li>Lindsey. <a href="https://transformer-circuits.pub/2025/introspection/index.html">“Emergent Introspective Awareness in Large Language Models”</a> (2025).</li>
+    <li>Karvonen et al.. <a href="https://arxiv.org/abs/2512.15674">“Activation Oracles”</a> (2025).</li>
+    <li>Fraser-Taliente, Kantamneni, Ong et al.. <a href="https://transformer-circuits.pub/2026/nla/index.html">“Natural Language Autoencoders Produce Unsupervised Explanations of LLM Activations”</a> (2026).</li>
+  </ol>
+  <h3 class="mono">Weight-sparse models / 权重稀疏模型</h3>
+  <ol>
+    <li>Gao et al.. <a href="https://arxiv.org/abs/2511.13653">“Weight-sparse transformers have interpretable circuits”</a> (2025).</li>
+  </ol>
+  <p class="mono ref-note"><span lang="en">All figures are schematic illustrations of each method; specific numbers in the text are from the papers above. The ratings in the comparison table are our own judgement.</span><span lang="zh-CN">文中所有图都是对方法原理的示意，正文中的具体数字均出自上列论文。对比表中的评分是我们自己的判断。</span></p>
+</section>
+</main>
+
+<footer class="mono"><a class="footer-brand" href="https://sec4.si/">SEC4.SI / SECURITY FOR SI</a><span class="research-labels">INTERPRETABILITY / FEATURES / CIRCUITS</span><div class="footer-links"><a href="https://benchmark.sec4.si/">Benchmark ↗</a><span>© 2026 SEC4SI</span></div><a class="site-address" href="https://lens.sec4.si/">lens.sec4.si</a></footer>
+<script type="module" src="./article.js"></script></body></html>
