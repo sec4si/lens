@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<script>let lang; try { lang = localStorage.getItem('lang') } catch {} if (lang ? lang === 'zh' : /^zh\b/i.test(navigator.language || '')) document.documentElement.lang = 'zh-CN'</script>
+<meta name="theme-color" content="#090c09"><meta name="description" content="We can see an AI thinking a step it never says, and prove it uses that step. But asked to read its own mind, it cannot say what that step was."><link rel="canonical" href="https://lens.sec4.si/research/self-explain/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/styles.css"><title>Can an AI explain itself? — Lens</title></head>
+<body><a class="skip" href="#main"><span lang="en">Skip to content</span><span lang="zh-CN">跳到正文</span></a>
+<header class="site-header"><a class="brand" href="https://sec4.si/" aria-label="sec4.si home"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 5v22h7M28 5v22h-7"/><path class="slash" d="m19 6-6 20"/></svg><span>sec4<span class="dot">.</span>si</span></a><span class="project-breadcrumb mono">/ lens</span><nav aria-label="Project navigation"><a href="https://benchmark.sec4.si/">Benchmark</a><a href="https://infer.sec4.si/">Infer</a><a href="https://lens.sec4.si/">Lens</a><a href="/#research" aria-current="page"><span lang="en">Research</span><span lang="zh-CN">研究</span></a><button class="lang-switch mono" type="button" aria-label="Switch language / 切换语言"><span class="en-mark">EN</span> / <span class="zh-mark">中</span></button><a class="repo-link" href="https://github.com/sec4si/lens">GitHub <svg class="arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></a></nav></header>
+
+<main id="main" class="article">
+<header class="article-head">
+  <a class="back mono" href="/#research">← <span lang="en">Research</span><span lang="zh-CN">研究</span></a>
+  <div class="eyebrow mono"><span class="cross" aria-hidden="true"></span> RESEARCH / 2026-11-02</div>
+  <h1><span lang="en">Can an AI explain itself?</span><span lang="zh-CN">AI 能解释自己吗？</span></h1>
+  <p class="dek"><span lang="en">We can watch a model think a step it never says out loud, and prove that it uses that step. But when we hand the model its own thoughts and ask what they mean, it cannot tell us.</span><span lang="zh-CN">我们能看到模型在心里想了一步它从没说出口的推理，也能证明它确实用了这一步。可当我们把它自己的“念头”交还给它、问它这是什么时，它说不出来。</span></p>
+  <p class="byline mono">sec4si · ZacharyZcR · <a href="https://github.com/sec4si/self-explain"><span lang="en">code &amp; data ↗</span><span lang="zh-CN">代码与数据 ↗</span></a></p>
+</header>
+
+<div class="prose">
+  <p><span lang="en">Ask a person how they got an answer and they will tell you a story. Sometimes the story is true; sometimes it is made up after the fact. With an AI the question is sharper still: it will happily explain itself, but nothing guarantees the explanation matches what actually happened inside.</span><span lang="zh-CN">问一个人是怎么得出答案的，他会讲一个故事。有时故事是真的，有时是事后编的。换成 AI，这个问题更尖锐：它很乐意解释自己，可没有任何东西能保证它的解释和它内部真正发生的事情对得上。</span></p>
+  <p><span lang="en">Interpretability gives us a second way in: instead of asking, look. And it raises a tempting idea, one Anthropic has been pursuing: what if we could let the model look at its own inner workings, and say in plain words what it sees? We tried this on an open model, Qwen3-8B, using our tool <a href="https://github.com/sec4si/LDB">LDB</a> to read and write the model’s internal state while it runs.</span><span lang="zh-CN">可解释性给了我们第二条路：不去问，直接看。它还引出了一个诱人的想法，Anthropic 也一直在研究：能不能让模型看见自己的内部，再用人话说出它看到了什么？我们在开源模型 Qwen3-8B 上做了尝试，用我们的工具 <a href="https://github.com/sec4si/LDB">LDB</a> 在模型运行时读取和写入它的内部状态。</span></p>
+  <p><span lang="en">The test question is the one from our <a href="/#what">home page</a>: “the capital of the state where Dallas is located is…” To answer “Austin”, the model has to think of “Texas” first, but it never writes Texas down. Can we see that hidden step? Is it real? And can the model tell us about it itself?</span><span lang="zh-CN">测试题就是<a href="/#what">首页</a>上那道：“达拉斯所在州的首府是……”要答出“奥斯汀”，模型得先想到“得克萨斯”，但它从头到尾都没把得克萨斯写出来。我们看得到这一步吗？这一步是真的吗？模型自己能告诉我们吗？</span></p>
+</div>
+<aside class="prose callout">
+  <h3><span lang="en">Three questions, three answers</span><span lang="zh-CN">三个问题，三个答案</span></h3>
+  <ol>
+    <li><span lang="en"><b>Can we see the hidden step?</b> Yes. Inside the model, “Texas” lights up before “Austin”, and we can say on which layers.</span><span lang="zh-CN"><b>看得到那一步吗？</b>看得到。在模型内部，“得克萨斯”先亮起，“奥斯汀”后出现，而且我们能指出是在哪几层。</span></li>
+    <li><span lang="en"><b>Does it really use it?</b> Yes. Swap “Texas” for “California” inside its head and the answer moves toward Sacramento. But it is not the only thread: the fact is stored in more than one place.</span><span lang="zh-CN"><b>它真的用了吗？</b>用了。在它脑子里把“得克萨斯”换成“加利福尼亚”，答案就朝萨克拉门托偏。但这不是唯一的线索：这条信息存了不止一份。</span></li>
+    <li><span lang="en"><b>Can it say so itself?</b> Not yet. Handed its own thoughts, it could not name the hidden step, and one apparent success turned out to be an illusion.</span><span lang="zh-CN"><b>它自己能说出来吗？</b>还不能。把它自己的念头交还给它，它说不出那个中间步骤；有一次看似成功，后来证明只是假象。</span></li>
+  </ol>
+</aside>
+<div class="prose">
+  <h2><span lang="en">Can we see the hidden step?</span><span lang="zh-CN">看得到那一步吗？</span></h2>
+  <p><span lang="en">A model works in layers, 36 of them here. Each layer passes along a long list of numbers describing what it is thinking. Normally only the last layer is turned into a word. The <b>logit lens</b> translates every layer into words, as if asking: “if you had to speak now, what would you say?”</span><span lang="zh-CN">模型是一层一层往下算的，这个模型有 36 层。每一层都会传下去一长串数字，描述它此刻在想什么。通常只有最后一层会被翻译成词。<b>logit lens</b> 则把每一层都翻译成词，相当于在每一层问一句：“如果现在就得开口，你会说什么？”</span></p>
+  <p><span lang="en">We asked 72 questions of this kind, about states, countries, capitals, currencies and languages. The model answered 68 correctly, and all the analysis below uses those 68.</span><span lang="zh-CN">我们出了 72 道这类题，涉及州、国家、首都、货币和语言。模型答对了 68 道，下文的分析都基于这 68 道题。</span></p>
+</div>
+<section class="scrolly-block" data-chapter="1">
+  <div class="scrolly">
+    <div class="steps">
+      <article class="step">
+        <span class="step-no mono">1.1</span>
+        <h3><span lang="en">Texas, then Austin</span><span lang="zh-CN">先想到得克萨斯，再想到奥斯汀</span></h3>
+        <p><span lang="en">While reading “Dallas”, the model is already thinking of Texas, on layers 10 to 16. At the end of the sentence, about to answer, Texas surfaces on layer 24, and from layer 28 Austin takes over.</span><span lang="zh-CN">读到“Dallas”的时候，模型在第 10～16 层就已经想到了得克萨斯。到句子末尾准备回答时，得克萨斯在第 24 层冒出来，第 28 层之后奥斯汀取而代之。</span></p>
+        <p><span lang="en">This is us reading the model, not the model telling us. It shows that the step is there. It does not yet show that the model uses it.</span><span lang="zh-CN">这是我们在替模型解读，不是模型在告诉我们。它说明这一步存在，但还不能说明模型真的用了它。</span></p>
+      </article>
+    </div>
+    <div class="stage">
+      <div class="stage-meta mono"><span class="stage-fig"></span><span lang="en">DATA: QWEN3-8B</span><span lang="zh-CN">数据：Qwen3-8B</span></div>
+      <div class="stage-scenes"></div>
+    </div>
+  </div>
+</section>
+<div class="prose">
+  <h2><span lang="en">Does it really use it?</span><span lang="zh-CN">它真的用了吗？</span></h2>
+  <p><span lang="en">Seeing a thought is not the same as proving it matters. To test that, we reach in and change it, the way a mechanic swaps a part to see what it does. Using LDB, we edit the model’s internal state mid-thought and watch the answer.</span><span lang="zh-CN">看见一个念头，不等于证明它起了作用。要检验这一点，就得伸手进去改，就像修理工换下一个零件看看会怎样。我们用 LDB 在模型“想到一半”时修改它的内部状态，然后看答案怎么变。</span></p>
+</div>
+<section class="scrolly-block" data-chapter="2">
+  <div class="scrolly">
+    <div class="steps">
+      <article class="step">
+        <span class="step-no mono">2.1</span>
+        <h3><span lang="en">Swap the state, and the answer follows</span><span lang="zh-CN">换掉那个州，答案就跟着变</span></h3>
+        <p><span lang="en">We take the model’s inner representation of the state and replace it with another state. If the model really goes Dallas → Texas → Austin, swapping Texas for California should send it to Sacramento. We did this for every question, each time swapping in the state from another question.</span><span lang="zh-CN">我们把模型内部代表那个州的部分，换成另一个州。如果模型真的是“达拉斯 → 得克萨斯 → 奥斯汀”这样想的，把得克萨斯换成加利福尼亚，它就该改说萨克拉门托。每道题我们都这样做，每次换上另一道题里的州。</span></p>
+        <p><span lang="en">Making the swap at the moment it reads the city, about a quarter of the questions switch completely, and on most of the rest the new capital becomes far more likely. A random change of the same size almost never does this. So the model really does use the state it was thinking of.</span><span lang="zh-CN">在它读到城市名的那一刻动手，大约四分之一的题直接改口；其余大多数题里，新首府的可能性也大大上升。同样大小的随机改动几乎从不会这样。所以模型确实用到了它心里想的那个州。</span></p>
+      </article>
+      <article class="step">
+        <span class="step-no mono">2.2</span>
+        <h3><span lang="en">But it is not the only thread</span><span lang="zh-CN">但这不是唯一的线索</span></h3>
+        <p><span lang="en">Swapping the whole city works almost every time, while swapping just the state works a quarter of the time. And deleting the state outright barely dents the answer.</span><span lang="zh-CN">把整个城市换掉，几乎每次都会改口；只换州，只有四分之一会改口。直接把州删掉，答案也几乎不受影响。</span></p>
+        <p><span lang="en">The fact “Dallas is in Texas” is stored in more than one place, or spread across several directions. Our edit hits only one of them. That is a limit of our tools as much as a fact about the model.</span><span lang="zh-CN">“达拉斯在得克萨斯”这条信息存了不止一处，或者分散在好几个方向上，我们的修改只打中了其中之一。这既是模型的特点，也说明我们的工具还不够精细。</span></p>
+      </article>
+    </div>
+    <div class="stage">
+      <div class="stage-meta mono"><span class="stage-fig"></span><span lang="en">DATA: QWEN3-8B</span><span lang="zh-CN">数据：Qwen3-8B</span></div>
+      <div class="stage-scenes"></div>
+    </div>
+  </div>
+</section>
+<div class="prose">
+  <h2><span lang="en">Can it say so itself?</span><span lang="zh-CN">它自己能说出来吗？</span></h2>
+  <p><span lang="en">Now the part we most wanted. We take the model’s internal state from one moment, start a completely new conversation, and place that state into a question as the unknown “X”: “What does X refer to?” The model is, in effect, looking at its own thought and being asked to describe it. Methods of this kind, such as Patchscopes and SelfIE, need no extra training.</span><span lang="zh-CN">现在是我们最想做的部分。我们取出模型某一刻的内部状态，另开一段全新的对话，把这个状态放进问题里当作未知的“X”：“X 指的是什么？”这相当于让模型看着自己的念头，再描述它是什么。Patchscopes、SelfIE 这类方法都是这样做的，不需要额外训练。</span></p>
+</div>
+<section class="scrolly-block" data-chapter="3">
+  <div class="scrolly">
+    <div class="steps">
+      <article class="step">
+        <span class="step-no mono">3.1</span>
+        <h3><span lang="en">About to answer, it cannot say “Texas”</span><span lang="zh-CN">准备回答时，它说不出“得克萨斯”</span></h3>
+        <p><span lang="en">Taken from the moment before it answers, when we know “Texas” is on its mind, the model never names the state. Not once in 68 questions, with three different ways of asking and every layer we tried. On the layers where “Texas” is strongest, its reply is word for word what it says when nothing was placed there at all: it talks about the letter X.</span><span lang="zh-CN">取模型回答前那一刻的状态，我们明知它心里想着“得克萨斯”，它却一次也没说出这个州名。68 道题、三种问法、试过的每一层，结果都一样。在“得克萨斯”最强的那几层，它的回答和什么都没放进去时一字不差：它在谈论字母 X。</span></p>
+        <p><span lang="en">Taken from the moment it reads “Dallas”, it does say Texas, often. That looks like success.</span><span lang="zh-CN">可如果取它读到“Dallas”那一刻的状态，它确实常常说出得克萨斯。看起来成功了。</span></p>
+      </article>
+      <article class="step">
+        <span class="step-no mono">3.2</span>
+        <h3><span lang="en">The control that gives it away</span><span lang="zh-CN">一个对照，让假象露了馅</span></h3>
+        <p><span lang="en">So we asked the same thing using a sentence with no question in it at all: “I recently visited Dallas.” The model named Texas just as often.</span><span lang="zh-CN">于是我们换了一句完全不涉及问题的普通句子：“我最近去了达拉斯。”模型说出得克萨斯的次数，几乎一模一样。</span></p>
+        <p><span lang="en">It was not reporting a step of its reasoning. It recognised “Dallas” and added what everyone knows about Dallas. Without this control we would have announced that the model can read its own reasoning. It cannot, at least not this way and not at this size.</span><span lang="zh-CN">它并不是在报告推理中的某一步，只是认出了“达拉斯”，再顺口补上关于达拉斯的常识。如果没有这个对照，我们就会宣布“模型能读懂自己的推理”。事实上它做不到，至少用这种方法、在这个规模上做不到。</span></p>
+      </article>
+    </div>
+    <div class="stage">
+      <div class="stage-meta mono"><span class="stage-fig"></span><span lang="en">DATA: QWEN3-8B</span><span lang="zh-CN">数据：Qwen3-8B</span></div>
+      <div class="stage-scenes"></div>
+    </div>
+  </div>
+</section>
+<div class="prose">
+  <h2><span lang="en">How this compares</span><span lang="zh-CN">和其他研究对照</span></h2>
+  <p><span lang="en">The Dallas example comes from Anthropic’s study of Claude 3.5 Haiku. They found the same hidden Texas step and swapped it for California to get Sacramento, using a dictionary of features built by training a readable stand-in model. We reached the same conclusion on an open model without training anything, and counted how often it works across 68 questions rather than showing single examples.</span><span lang="zh-CN">达拉斯这个例子来自 Anthropic 对 Claude 3.5 Haiku 的研究。他们训练了一个可读的替代模型、从中拆出特征，找到了同样的“得克萨斯”中间步骤，并把它换成加利福尼亚得到了萨克拉门托。我们在开源模型上、不训练任何东西，得到了同样的结论，而且统计了它在 68 道题上起效的比例，而不是展示个别例子。</span></p>
+  <p><span lang="en">On a model explaining itself, Anthropic found that even Claude Opus 4 and 4.1 notice a thought planted in their own activations only about 20% of the time at best. Our result points the same way: left untrained, a model is poor at reading its own mind. Their newer work trains models to do it, with Activation Oracles and Natural Language Autoencoders, and still warns that such explanations can be made up.</span><span lang="zh-CN">关于模型解释自己，Anthropic 发现，即使是 Claude Opus 4 和 4.1，在最理想的条件下，也只有大约 20% 的时候能察觉到被植入自身激活的念头。我们的结果方向一致：不经训练，模型很不擅长读懂自己。他们较新的工作改为专门训练模型去读自己，比如 Activation Oracles 和自然语言自编码器，但也提醒这样得到的解释可能是编出来的。</span></p>
+  <p><span lang="en">Our contribution is modest but practical: everything here runs through LDB on a real inference stack, the model and code are open, and we add a control that is easy to forget. Whenever a model “reads” its own state, check the same reading in a context where the reasoning is absent.</span><span lang="zh-CN">我们的贡献不大，但实用：这里的一切都通过 LDB 跑在真实的推理系统上，模型和代码都是公开的，而且我们补上了一个很容易被忽略的对照。每当模型“读出”了自己的状态，都要在一个不包含那段推理的语境里，再读一遍做比较。</span></p>
+</div>
+<div class="prose">
+  <h2><span lang="en">Fair warnings</span><span lang="zh-CN">需要坦白的几点</span></h2>
+  <ul>
+    <li><span lang="en"><b>One model, 68 questions.</b> Qwen3-8B, with one kind of two-step question. A bigger model may well do better at describing itself.</span><span lang="zh-CN"><b>一个模型，68 道题。</b>只用了 Qwen3-8B 和一类两跳题。更大的模型很可能更会描述自己。</span></li>
+    <li><span lang="en"><b>Only training-free methods.</b> We did not train the model to read itself. Trained approaches might succeed where these failed.</span><span lang="zh-CN"><b>只试了免训练的方法。</b>我们没有专门训练模型去读自己。训练过的方法，也许能在这里做到我们没做到的事。</span></li>
+    <li><span lang="en"><b>A trap in the running example.</b> Scrambling the city can make the model fall back on the most common capital of all, Sacramento. So for Dallas, even a random nudge pushes Sacramento close to first place, which would make a swap to California look better than it is. For the worked example we used Louisville instead, where random nudges never change the answer.</span><span lang="zh-CN"><b>例子里藏着一个陷阱。</b>把城市的表示打乱，模型会退回到最常见的那个首府：萨克拉门托。所以在达拉斯这一题上，连随机扰动都会把萨克拉门托推到接近第一，换成加利福尼亚的效果就会显得比实际更好。因此单题演示改用了路易斯维尔，它在随机扰动下从不改口。</span></li>
+    <li><span lang="en"><b>A crude handle on “Texas”.</b> We approximated the model’s idea of Texas by how it represents the single word “Texas”. A cleaner handle would likely give stronger effects in section 2.</span><span lang="zh-CN"><b>对“得克萨斯”的把握还很粗糙。</b>我们用模型对单独一个词“Texas”的表示，来近似它心里的“得克萨斯”。更精细的方法，在第 2 节里很可能会得到更强的效果。</span></li>
+  </ul>
+  <h2><span lang="en">What comes next</span><span lang="zh-CN">接下来</span></h2>
+  <p><span lang="en">Two experiments follow directly. First, the same tests on a larger model, to learn whether the model was too small or the method too weak. Second, train a model to read its own states, and then check what it says with the same interventions used here. We are also building this into LDB, so that any model it serves can be asked to explain an answer and have that explanation checked on the spot.</span><span lang="zh-CN">接下来有两个实验。第一，在更大的模型上做同样的测试，看看是模型太小，还是方法本身不行。第二，专门训练一个模型去读自己的状态，再用本文的干预方法检验它说的话。我们也在把这套流程做进 LDB，让它服务的任何模型都能被要求解释一个回答，并且当场检验这个解释。</span></p>
+</div>
+<section class="references">
+  <h2><span lang="en">REFERENCES</span><span lang="zh-CN">参考文献</span></h2>
+  <ol>
+    <li>nostalgebraist. <a href="https://www.lesswrong.com/posts/AcKRB8wDpdaN6v6ru/interpreting-gpt-the-logit-lens">“interpreting GPT: the logit lens”</a> (2020).</li>
+    <li>Lindsey et al.. <a href="https://transformer-circuits.pub/2025/attribution-graphs/biology.html">“On the Biology of a Large Language Model”</a> (2025).</li>
+    <li>Ghandeharioun et al.. <a href="https://arxiv.org/abs/2401.06102">“Patchscopes: A Unifying Framework for Inspecting Hidden Representations of Language Models”</a> (2024).</li>
+    <li>Chen et al.. <a href="https://arxiv.org/abs/2403.10949">“SelfIE: Self-Interpretation of Large Language Model Embeddings”</a> (2024).</li>
+    <li>Lindsey. <a href="https://transformer-circuits.pub/2025/introspection/index.html">“Emergent Introspective Awareness in Large Language Models”</a> (2025).</li>
+    <li>Karvonen et al.. <a href="https://arxiv.org/abs/2512.15674">“Activation Oracles”</a> (2025).</li>
+    <li>Fraser-Taliente, Kantamneni, Ong et al.. <a href="https://transformer-circuits.pub/2026/nla/index.html">“Natural Language Autoencoders Produce Unsupervised Explanations of LLM Activations”</a> (2026).</li>
+  </ol>
+  <p class="mono ref-note"><span lang="en">Every chart is drawn from the raw results of our runs on Qwen3-8B (data.json). The code, questions and raw results are open source at <a href="https://github.com/sec4si/self-explain">github.com/sec4si/self-explain</a>, and the model’s internals are read and written with <a href="https://github.com/sec4si/LDB">LDB</a>.</span><span lang="zh-CN">本文所有图表都直接读取我们在 Qwen3-8B 上运行得到的原始结果（data.json）。代码、题目和原始结果都已开源在 <a href="https://github.com/sec4si/self-explain">github.com/sec4si/self-explain</a>，读写模型内部状态用的是 <a href="https://github.com/sec4si/LDB">LDB</a>。</span></p>
+</section>
+</main>
+
+<footer class="mono"><a class="footer-brand" href="https://sec4.si/">SEC4.SI / SECURITY FOR SI</a><span class="research-labels">INTERPRETABILITY / FEATURES / CIRCUITS</span><div class="footer-links"><a href="https://benchmark.sec4.si/">Benchmark ↗</a><a href="https://infer.sec4.si/">Infer ↗</a><span>© 2026 SEC4SI</span></div><a class="site-address" href="https://lens.sec4.si/">lens.sec4.si</a></footer>
+<script type="module" src="./article.js"></script></body></html>

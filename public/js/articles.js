@@ -3,6 +3,12 @@ import { t, html } from './util.js';
 // Every published article, newest first. Each lives at /research/<slug>/.
 export const ARTICLES = [
   {
+    slug: 'self-explain',
+    date: '2026-11-02',
+    title: ['Can an AI explain itself?', 'AI 能解释自己吗？'],
+    summary: ['We can watch a model think a step it never says, and prove it uses that step. But handed its own thoughts, it cannot tell us what they are.', '我们能看到模型心里想了一步没说出口的推理，也能证明它用了这一步；可把它自己的念头交还给它，它说不出那是什么。'],
+  },
+  {
     slug: 'sparse-circuits',
     date: '2026-11-02',
     title: ['Can a model’s reasoning be made small enough to read?', '能让模型的思路小到读得懂吗？'],
