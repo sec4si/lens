@@ -195,3 +195,43 @@ export function steering(scene, caption) {
     leave() { clearInterval(timer); },
   };
 }
+
+const ROUTE_VIEWS = [
+  {
+    rows: (zh ? ['def', 'self', '：', 'return', '这只', '猫', '坐下', '。'] : ['def', 'self', ':', 'return', 'The', 'cat', 'sat', '.'])
+      .map((label, i) => ({ label, cells: [[1, 4], [2, 5], [0, 7], [1, 4], [3, 6], [3, 6], [6, 3], [0, 7]][i] })),
+    caption: t('Each token picks 2 of 8 experts. The pattern follows syntax: code keywords and punctuation keep returning to the same experts.', '每个 token 从 8 个专家里选 2 个。规律跟着语法走：代码关键字和标点总是回到同样的专家。'),
+  },
+  {
+    rows: [[t('LaTeX papers', 'LaTeX 论文'), [.13, .12, .12, .13, .12, .13, .12, .13]], [t('Biology', '生物学'), [.12, .13, .13, .12, .13, .12, .12, .13]],
+      [t('Philosophy', '哲学'), [.13, .12, .12, .12, .13, .13, .13, .12]], [t('Math', '数学'), [.10, .16, .11, .14, .10, .15, .11, .13]]]
+      .map(([label, shares]) => ({ label, shares })),
+    caption: t('Share of tokens per expert, by domain: almost the same everywhere. There is no “biology expert”.', '按领域统计每个专家处理的 token 比例：几乎处处一样。并不存在“生物学专家”。'),
+  },
+  {
+    rows: [{ label: t('“Paris” · batch A', '“巴黎” · 批次 A'), cells: [3, 6] }, { label: t('“Paris” · batch B', '“巴黎” · 批次 B'), cells: [1, 6], full: 3 }],
+    caption: t('Same token, same model. In batch B expert 3 is already full, so the token is sent elsewhere.', '同一个 token，同一个模型。批次 B 里 3 号专家已经满了，这个 token 只好去别处。'),
+  },
+];
+
+// MoE routing: read which experts each token chose, and see why that reading needs care.
+export function routing(scene, caption) {
+  const grid = html('div', 'route-grid mono', scene);
+  return views(scene, [t('Routing', '路由'), t('By topic', '按主题'), t('Batch', '批次')], i => {
+    const { rows, caption: line } = ROUTE_VIEWS[i];
+    grid.replaceChildren();
+    html('span', 'route-label', grid);
+    for (let e = 0; e < 8; e++) html('span', 'route-head', grid).textContent = `E${e}`;
+    for (const { label, cells, shares, full } of rows) {
+      html('span', 'route-label', grid).textContent = label;
+      for (let e = 0; e < 8; e++) {
+        const cell = html('span', `route-cell${e === full ? ' full' : ''}`, grid);
+        const value = shares ? (shares[e] - 0.09) / 0.08 : cells.includes(e) ? 1 : 0;
+        cell.style.setProperty('--v', value);
+        if (shares) cell.textContent = `${Math.round(shares[e] * 100)}`;
+        if (e === full) cell.textContent = '×';
+      }
+    }
+    caption(line);
+  });
+}

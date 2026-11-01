@@ -6,7 +6,7 @@ export const ARTICLES = [
     slug: 'methods',
     date: '2026-11-01',
     title: ['A field guide to interpretability methods', '可解释性方法全景'],
-    summary: ['Fourteen tools for looking inside language models, from probes to sparse autoencoders: how each works and where it falls short.', '窥探大模型内部的十四种工具，从探针到稀疏自编码器：每一种怎么工作，又有哪些不足。'],
+    summary: ['Fifteen tools for looking inside language models, from probes to sparse autoencoders: how each works and where it falls short.', '窥探大模型内部的十五种工具，从探针到稀疏自编码器：每一种怎么工作，又有哪些不足。'],
   },
 ];
 

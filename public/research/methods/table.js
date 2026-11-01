@@ -11,6 +11,7 @@ const DIMENSIONS = [
 const METHODS = [
   ['probe', t('Linear probes', '线性探针'), [0, 0, 3, 3, 2]],
   ['lens', t('Logit / tuned lens', 'Logit / Tuned lens'), [0, 2, 3, 3, 1]],
+  ['moe', t('MoE routing', 'MoE 专家路由'), [0, 2, 3, 3, 1]],
   ['saliency', t('Saliency & attention', '显著性与注意力'), [0, 2, 3, 3, 0]],
   ['patching', t('Activation patching', '激活修补'), [3, 1, 2, 1, 2]],
   ['steering', t('Steering vectors', '引导向量'), [2, 0, 3, 3, 2]],

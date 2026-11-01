@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <script>let lang; try { lang = localStorage.getItem('lang') } catch {} if (lang ? lang === 'zh' : /^zh\b/i.test(navigator.language || '')) document.documentElement.lang = 'zh-CN'</script>
-<meta name="theme-color" content="#090c09"><meta name="description" content="A plain-language field guide to fourteen interpretability methods, from probes to sparse autoencoders, with what each can and cannot do."><link rel="canonical" href="https://lens.sec4.si/research/methods/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/styles.css"><title>A Field Guide to Interpretability Methods — Lens</title></head>
+<meta name="theme-color" content="#090c09"><meta name="description" content="A plain-language field guide to fifteen interpretability methods, from probes to sparse autoencoders, with what each can and cannot do."><link rel="canonical" href="https://lens.sec4.si/research/methods/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/styles.css"><title>A Field Guide to Interpretability Methods — Lens</title></head>
 <body><a class="skip" href="#main"><span lang="en">Skip to content</span><span lang="zh-CN">跳到正文</span></a>
 <header class="site-header"><a class="brand" href="https://sec4.si/" aria-label="sec4.si home"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 5v22h7M28 5v22h-7"/><path class="slash" d="m19 6-6 20"/></svg><span>sec4<span class="dot">.</span>si</span></a><span class="project-breadcrumb mono">/ lens</span><nav aria-label="Project navigation"><a href="https://benchmark.sec4.si/">Benchmark</a><a href="https://lens.sec4.si/">Lens</a><a href="/#research" aria-current="page"><span lang="en">Research</span><span lang="zh-CN">研究</span></a><button class="lang-switch mono" type="button" aria-label="Switch language / 切换语言"><span class="en-mark">EN</span> / <span class="zh-mark">中</span></button><a class="repo-link" href="https://github.com/sec4si/lens">GitHub <svg class="arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></a></nav></header>
 
@@ -10,13 +10,13 @@
   <a class="back mono" href="/#research">← <span lang="en">Research</span><span lang="zh-CN">研究</span></a>
   <div class="eyebrow mono"><span class="cross" aria-hidden="true"></span> RESEARCH / 2026-11-01</div>
   <h1><span lang="en">A field guide to interpretability methods</span><span lang="zh-CN">可解释性方法全景</span></h1>
-  <p class="dek"><span lang="en">Fourteen tools researchers use to look inside language models: how each one works, what it is good for, and where it falls short.</span><span lang="zh-CN">研究者用来窥探大模型内部的十四种工具：每一种怎么工作、擅长什么、又有哪些不足。</span></p>
+  <p class="dek"><span lang="en">Fifteen tools researchers use to look inside language models: how each one works, what it is good for, and where it falls short.</span><span lang="zh-CN">研究者用来窥探大模型内部的十五种工具：每一种怎么工作、擅长什么、又有哪些不足。</span></p>
   <p class="byline mono">sec4si · ZacharyZcR</p>
 </header>
 
 <div class="prose">
   <p><span lang="en">Our home page covered what interpretability is and why it matters. This article is the toolbox: the lenses researchers have built so far, and what each can and cannot see.</span><span lang="zh-CN">首页讲了可解释性是什么、为什么重要。这篇文章是一份工具清单：研究者至今造出了哪些“镜头”，每一种能看到什么、看不到什么。</span></p>
-  <p><span lang="en">We group fourteen methods into seven families by what they do to the model. Each comes with a figure you can play with, its strengths (✓), its weaknesses (✗), and our view.</span><span lang="zh-CN">我们按“对模型做了什么”，把十四种方法分成七类。每种方法都配一张可以动手的图，列出它的优点（✓）、不足（✗），以及我们的看法。</span></p>
+  <p><span lang="en">We group fifteen methods into seven families by what they do to the model. Each comes with a figure you can play with, its strengths (✓), its weaknesses (✗), and our view.</span><span lang="zh-CN">我们按“对模型做了什么”，把十五种方法分成七类。每种方法都配一张可以动手的图，列出它的优点（✓）、不足（✗），以及我们的看法。</span></p>
   <p><span lang="en">The short version: no single method can tell you what a model is thinking. Good research combines them, using decomposition to find candidates, interventions to test them, and automation to scale up.</span><span lang="zh-CN">先说结论：没有任何一种方法能单独回答“模型在想什么”。好的研究会把它们组合起来：用拆解找到候选，用干预验证因果，再用自动化扩展到整个模型。</span></p>
 </div>
 
@@ -51,6 +51,20 @@
           <li class="con"><span lang="en">It shows what the model is about to say, not why.</span><span lang="zh-CN">只看到模型“想说什么”，看不到“为什么这么想”。</span></li>
         </ul>
         <p class="verdict"><b><span lang="en">Our view</span><span lang="zh-CN">我们的看法</span></b><span lang="en">Great for debugging and building intuition, not for claims about mechanism.</span><span lang="zh-CN">调试和建立直觉的好工具，不适合拿来下机制层面的结论。</span></p>
+      </article>
+      <article class="step" id="m-moe">
+        <span class="step-no mono">1.3</span>
+        <h3><span lang="en">Expert routing in MoE models</span><span lang="zh-CN">MoE 专家路由</span></h3>
+        <p><span lang="en">In a mixture-of-experts model, a router sends each token to a few of many expert networks. That choice is recorded on every forward pass, so you can read which experts each token used without training anything.</span><span lang="zh-CN">在混合专家（MoE）模型里，路由器会把每个 token 分给众多专家网络中的少数几个。每次前向计算都会记下这个选择，所以不用训练任何东西，就能读出每个 token 用了哪些专家。</span></p>
+        <ul class="pc">
+          <li class="pro"><span lang="en">Free: routing is part of the model itself.</span><span lang="zh-CN">完全免费：路由本来就是模型的一部分。</span></li>
+          <li class="pro"><span lang="en">Discrete and sparse, far easier to read than dense activations.</span><span lang="zh-CN">离散、稀疏，比稠密激活好读得多。</span></li>
+          <li class="pro"><span lang="en">Points straight to interventions: switching specific experts on or off can steer behaviors such as safety, without fine-tuning.</span><span lang="zh-CN">能直接指向干预：开关特定的专家，就能在不微调的情况下调控安全性等行为。</span></li>
+          <li class="con"><span lang="en">Experts rarely split by topic. In Mixtral, expert usage looked much the same for LaTeX papers, biology and philosophy; routing tracked syntax and the tokens themselves.</span><span lang="zh-CN">专家很少按主题分工。在 Mixtral 里，LaTeX 论文、生物学和哲学文本用到的专家分布几乎一样，路由更多跟着语法和 token 本身走。</span></li>
+          <li class="con"><span lang="en">Same route does not mean cause: like a probe, readable is not the same as used.</span><span lang="zh-CN">路由一致不代表因果：和探针一样，读得出来不等于在用。</span></li>
+          <li class="con"><span lang="en">With capacity limits, where a token goes can depend on other requests in the same batch.</span><span lang="zh-CN">有容量限制时，一个 token 去哪个专家，还可能取决于同一批次里的其他请求。</span></li>
+        </ul>
+        <p class="verdict"><b><span lang="en">Our view</span><span lang="zh-CN">我们的看法</span></b><span lang="en">A free reading that MoE models hand us, and worth using. Treat it as a lead rather than an explanation, and reproduce results under fixed batching.</span><span lang="zh-CN">MoE 模型送给我们的现成读数，值得用。但要把它当线索而不是解释，并在固定的批次条件下复现结果。</span></p>
       </article>
     </div>
     <div class="stage">
@@ -330,67 +344,75 @@
   <h3 class="mono">Logit lens, tuned lens</h3>
   <ol>
     <li>nostalgebraist. <a href="https://www.lesswrong.com/posts/AcKRB8wDpdaN6v6ru/interpreting-gpt-the-logit-lens">“interpreting GPT: the logit lens”</a> (2020).</li>
-    <li>Belrose et al.. <a href="https://arxiv.org/abs/2303.08112">“Eliciting Latent Predictions from Transformers with the Tuned Lens”</a> (2023).</li>
+    <li>Belrose et al. <a href="https://arxiv.org/abs/2303.08112">“Eliciting Latent Predictions from Transformers with the Tuned Lens”</a> (2023).</li>
+  </ol>
+  <h3 class="mono">MoE routing / MoE 专家路由</h3>
+  <ol>
+    <li>Jiang et al. <a href="https://arxiv.org/abs/2401.04088">“Mixtral of Experts”</a> (2024).</li>
+    <li>Dai et al. <a href="https://arxiv.org/abs/2401.06066">“DeepSeekMoE: Towards Ultimate Expert Specialization in Mixture-of-Experts Language Models”</a> (2024).</li>
+    <li>Xue et al. <a href="https://arxiv.org/abs/2402.01739">“OpenMoE: An Early Effort on Open Mixture-of-Experts Language Models”</a> (2024).</li>
+    <li>Hayes et al. <a href="https://arxiv.org/abs/2402.05526">“Buffer Overflow in Mixture of Experts”</a> (2024).</li>
+    <li>Fayyaz et al. <a href="https://arxiv.org/abs/2509.09660">“Steering MoE LLMs via Expert (De)Activation”</a> (2025).</li>
   </ol>
   <h3 class="mono">Saliency, attention / 显著性与注意力</h3>
   <ol>
-    <li>Sundararajan et al.. <a href="https://arxiv.org/abs/1703.01365">“Axiomatic Attribution for Deep Networks”</a> (2017).</li>
-    <li>Adebayo et al.. <a href="https://arxiv.org/abs/1810.03292">“Sanity Checks for Saliency Maps”</a> (2018).</li>
+    <li>Sundararajan et al. <a href="https://arxiv.org/abs/1703.01365">“Axiomatic Attribution for Deep Networks”</a> (2017).</li>
+    <li>Adebayo et al. <a href="https://arxiv.org/abs/1810.03292">“Sanity Checks for Saliency Maps”</a> (2018).</li>
     <li>Jain & Wallace. <a href="https://arxiv.org/abs/1902.10186">“Attention is not Explanation”</a> (2019).</li>
   </ol>
   <h3 class="mono">Activation patching / 激活修补</h3>
   <ol>
-    <li>Meng et al.. <a href="https://arxiv.org/abs/2202.05262">“Locating and Editing Factual Associations in GPT”</a> (2022).</li>
+    <li>Meng et al. <a href="https://arxiv.org/abs/2202.05262">“Locating and Editing Factual Associations in GPT”</a> (2022).</li>
     <li>Zhang & Nanda. <a href="https://arxiv.org/abs/2309.16042">“Towards Best Practices of Activation Patching in Language Models”</a> (2023).</li>
     <li>Heimersheim & Nanda. <a href="https://arxiv.org/abs/2404.15255">“How to use and interpret activation patching”</a> (2024).</li>
   </ol>
   <h3 class="mono">Steering / 引导向量</h3>
   <ol>
-    <li>Turner et al.. <a href="https://arxiv.org/abs/2308.10248">“Steering Language Models With Activation Engineering”</a> (2023).</li>
-    <li>Zou et al.. <a href="https://arxiv.org/abs/2310.01405">“Representation Engineering”</a> (2023).</li>
-    <li>Chen et al.. <a href="https://arxiv.org/abs/2507.21509">“Persona Vectors”</a> (2025).</li>
+    <li>Turner et al. <a href="https://arxiv.org/abs/2308.10248">“Steering Language Models With Activation Engineering”</a> (2023).</li>
+    <li>Zou et al. <a href="https://arxiv.org/abs/2310.01405">“Representation Engineering”</a> (2023).</li>
+    <li>Chen et al. <a href="https://arxiv.org/abs/2507.21509">“Persona Vectors”</a> (2025).</li>
   </ol>
   <h3 class="mono">Sparse autoencoders / 稀疏自编码器</h3>
   <ol>
-    <li>Elhage et al.. <a href="https://transformer-circuits.pub/2022/toy_model/index.html">“Toy Models of Superposition”</a> (2022).</li>
-    <li>Bricken et al.. <a href="https://transformer-circuits.pub/2023/monosemantic-features/index.html">“Towards Monosemanticity”</a> (2023).</li>
-    <li>Cunningham et al.. <a href="https://arxiv.org/abs/2309.08600">“Sparse Autoencoders Find Highly Interpretable Features in Language Models”</a> (2023).</li>
-    <li>Templeton et al.. <a href="https://transformer-circuits.pub/2024/scaling-monosemanticity/">“Scaling Monosemanticity”</a> (2024).</li>
-    <li>Gao et al.. <a href="https://arxiv.org/abs/2406.04093">“Scaling and evaluating sparse autoencoders”</a> (2024).</li>
-    <li>Lieberum et al.. <a href="https://arxiv.org/abs/2408.05147">“Gemma Scope”</a> (2024).</li>
-    <li>Chanin et al.. <a href="https://arxiv.org/abs/2409.14507">“A is for Absorption”</a> (2024).</li>
-    <li>Engels et al.. <a href="https://arxiv.org/abs/2410.14670">“Decomposing The Dark Matter of Sparse Autoencoders”</a> (2024).</li>
+    <li>Elhage et al. <a href="https://transformer-circuits.pub/2022/toy_model/index.html">“Toy Models of Superposition”</a> (2022).</li>
+    <li>Bricken et al. <a href="https://transformer-circuits.pub/2023/monosemantic-features/index.html">“Towards Monosemanticity”</a> (2023).</li>
+    <li>Cunningham et al. <a href="https://arxiv.org/abs/2309.08600">“Sparse Autoencoders Find Highly Interpretable Features in Language Models”</a> (2023).</li>
+    <li>Templeton et al. <a href="https://transformer-circuits.pub/2024/scaling-monosemanticity/">“Scaling Monosemanticity”</a> (2024).</li>
+    <li>Gao et al. <a href="https://arxiv.org/abs/2406.04093">“Scaling and evaluating sparse autoencoders”</a> (2024).</li>
+    <li>Lieberum et al. <a href="https://arxiv.org/abs/2408.05147">“Gemma Scope”</a> (2024).</li>
+    <li>Chanin et al. <a href="https://arxiv.org/abs/2409.14507">“A is for Absorption”</a> (2024).</li>
+    <li>Engels et al. <a href="https://arxiv.org/abs/2410.14670">“Decomposing The Dark Matter of Sparse Autoencoders”</a> (2024).</li>
     <li>Smith et al. (Google DeepMind). <a href="https://www.alignmentforum.org/posts/4uXCAJNuPKtKBsi28/negative-results-for-saes-on-downstream-tasks">“Negative Results for SAEs On Downstream Tasks and Deprioritising SAE Research”</a> (2025).</li>
   </ol>
   <h3 class="mono">Transcoders</h3>
   <ol>
-    <li>Dunefsky et al.. <a href="https://arxiv.org/abs/2406.11944">“Transcoders Find Interpretable LLM Feature Circuits”</a> (2024).</li>
-    <li>Paulo et al.. <a href="https://arxiv.org/abs/2501.18823">“Transcoders Beat Sparse Autoencoders for Interpretability”</a> (2025).</li>
+    <li>Dunefsky et al. <a href="https://arxiv.org/abs/2406.11944">“Transcoders Find Interpretable LLM Feature Circuits”</a> (2024).</li>
+    <li>Paulo et al. <a href="https://arxiv.org/abs/2501.18823">“Transcoders Beat Sparse Autoencoders for Interpretability”</a> (2025).</li>
     <li>Olah. <a href="https://transformer-circuits.pub/2025/faithfulness-toy-model/index.html">“A Toy Model of Mechanistic (Un)Faithfulness”</a> (2025).</li>
   </ol>
   <h3 class="mono">Crosscoders</h3>
   <ol>
-    <li>Lindsey et al.. <a href="https://transformer-circuits.pub/2024/crosscoders/index.html">“Sparse Crosscoders for Cross-Layer Features and Model Diffing”</a> (2024).</li>
-    <li>Minder et al.. <a href="https://arxiv.org/abs/2504.02922">“Overcoming Sparsity Artifacts in Crosscoders to Interpret Chat-Tuning”</a> (2025).</li>
+    <li>Lindsey et al. <a href="https://transformer-circuits.pub/2024/crosscoders/index.html">“Sparse Crosscoders for Cross-Layer Features and Model Diffing”</a> (2024).</li>
+    <li>Minder et al. <a href="https://arxiv.org/abs/2504.02922">“Overcoming Sparsity Artifacts in Crosscoders to Interpret Chat-Tuning”</a> (2025).</li>
   </ol>
   <h3 class="mono">Circuits / 电路</h3>
   <ol>
-    <li>Wang et al.. <a href="https://arxiv.org/abs/2211.00593">“Interpretability in the Wild: a Circuit for Indirect Object Identification in GPT-2 small”</a> (2022).</li>
-    <li>Conmy et al.. <a href="https://arxiv.org/abs/2304.14997">“Towards Automated Circuit Discovery for Mechanistic Interpretability”</a> (2023).</li>
-    <li>Ameisen et al.. <a href="https://transformer-circuits.pub/2025/attribution-graphs/methods.html">“Circuit Tracing: Revealing Computational Graphs in Language Models”</a> (2025).</li>
-    <li>Lindsey et al.. <a href="https://transformer-circuits.pub/2025/attribution-graphs/biology.html">“On the Biology of a Large Language Model”</a> (2025).</li>
+    <li>Wang et al. <a href="https://arxiv.org/abs/2211.00593">“Interpretability in the Wild: a Circuit for Indirect Object Identification in GPT-2 small”</a> (2022).</li>
+    <li>Conmy et al. <a href="https://arxiv.org/abs/2304.14997">“Towards Automated Circuit Discovery for Mechanistic Interpretability”</a> (2023).</li>
+    <li>Ameisen et al. <a href="https://transformer-circuits.pub/2025/attribution-graphs/methods.html">“Circuit Tracing: Revealing Computational Graphs in Language Models”</a> (2025).</li>
+    <li>Lindsey et al. <a href="https://transformer-circuits.pub/2025/attribution-graphs/biology.html">“On the Biology of a Large Language Model”</a> (2025).</li>
     <li>Anthropic. <a href="https://www.anthropic.com/research/open-source-circuit-tracing">“Open-sourcing circuit tracing tools”</a> (2025).</li>
   </ol>
   <h3 class="mono">Automation, self-report / 自动化与自述</h3>
   <ol>
-    <li>Bills et al.. <a href="https://openaipublic.blob.core.windows.net/neuron-explainer/paper/index.html">“Language models can explain neurons in language models”</a> (2023).</li>
+    <li>Bills et al. <a href="https://openaipublic.blob.core.windows.net/neuron-explainer/paper/index.html">“Language models can explain neurons in language models”</a> (2023).</li>
     <li>Lindsey. <a href="https://transformer-circuits.pub/2025/introspection/index.html">“Emergent Introspective Awareness in Large Language Models”</a> (2025).</li>
-    <li>Karvonen et al.. <a href="https://arxiv.org/abs/2512.15674">“Activation Oracles”</a> (2025).</li>
-    <li>Fraser-Taliente, Kantamneni, Ong et al.. <a href="https://transformer-circuits.pub/2026/nla/index.html">“Natural Language Autoencoders Produce Unsupervised Explanations of LLM Activations”</a> (2026).</li>
+    <li>Karvonen et al. <a href="https://arxiv.org/abs/2512.15674">“Activation Oracles”</a> (2025).</li>
+    <li>Fraser-Taliente, Kantamneni, Ong et al. <a href="https://transformer-circuits.pub/2026/nla/index.html">“Natural Language Autoencoders Produce Unsupervised Explanations of LLM Activations”</a> (2026).</li>
   </ol>
   <h3 class="mono">Weight-sparse models / 权重稀疏模型</h3>
   <ol>
-    <li>Gao et al.. <a href="https://arxiv.org/abs/2511.13653">“Weight-sparse transformers have interpretable circuits”</a> (2025).</li>
+    <li>Gao et al. <a href="https://arxiv.org/abs/2511.13653">“Weight-sparse transformers have interpretable circuits”</a> (2025).</li>
   </ol>
   <p class="mono ref-note"><span lang="en">All figures are schematic illustrations of each method; specific numbers in the text are from the papers above. The ratings in the comparison table are our own judgement.</span><span lang="zh-CN">文中所有图都是对方法原理的示意，正文中的具体数字均出自上列论文。对比表中的评分是我们自己的判断。</span></p>
 </section>
