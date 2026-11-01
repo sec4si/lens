@@ -11,7 +11,7 @@
   <div class="eyebrow mono"><span class="cross" aria-hidden="true"></span> RESEARCH / 2026-11-02</div>
   <h1><span lang="en">Can a model’s reasoning be made small enough to read?</span><span lang="zh-CN">能让模型的思路小到读得懂吗？</span></h1>
   <p class="dek"><span lang="en">We cut almost all the connections inside small AI models while they learned. Each skill ended up on a small, separate set of connections: we could remove one skill without touching the others, and read how one of them works. Bolting separately learned skills together failed at first; once each piece had its own channel and learned to stay quiet on puzzles that were not its own, it worked.</span><span lang="zh-CN">我们在小型 AI 模型学习的时候，剪掉了它内部几乎所有的连线。结果每项本领都落在了一小撮、彼此分开的连线上：可以单独拿掉一项本领而不伤到其他，也能读懂其中一项是怎么做到的。把分开学会的本领装到一起，一开始失败了；直到给每一块开了专用通道，并让它学会"不是自己的题就闭嘴"，才成功。</span></p>
-  <p class="byline mono">sec4si · ZacharyZcR</p>
+  <p class="byline mono">sec4si · ZacharyZcR · <a href="https://github.com/sec4si/sparse-circuits"><span lang="en">code &amp; data ↗</span><span lang="zh-CN">代码与数据 ↗</span></a></p>
 </header>
 
 <div class="prose">
@@ -71,7 +71,7 @@
   <summary class="mono"><span lang="en">Technical details</span><span lang="zh-CN">技术细节</span></summary>
   <p><span lang="en">Training: after every optimizer step, each weight matrix keeps its top-k weights by magnitude; the kept share falls exponentially from 100% to the target over the first half of 12,000 steps.</span><span lang="zh-CN">训练：每次优化之后，每个权重矩阵只保留绝对值最大的 top-k 个权重；保留比例在 12,000 步的前一半里按指数从 100% 降到目标值。</span></p>
   <p><span lang="en">Circuit search: every non-zero weight gets a learnable gate (straight-through binary mask with an L1 penalty λ). We rank weights by gate value and binary-search the fewest that keep test accuracy at 95%, over nine values of λ. Removed weights are set to zero. At large λ all gates close and the ranking is lost, which is why some runs keep the whole model.</span><span lang="zh-CN">电路搜索：每个非零权重配一个可学习的开关（直通估计的二值 mask，加 L1 惩罚 λ）。按开关强弱排序，二分搜索出仍能保持 95% 准确率的最少权重数，λ 取九个值。被去掉的权重置零。λ 太大时所有开关一起关闭、排序信息丢失，这就是有些运行几乎保留了整个模型的原因。</span></p>
-  <p><span lang="en">“Wires” are weights, and the counts include the embedding matrices. Three seeds per configuration.</span><span lang="zh-CN">文中的“连线”就是权重，计数包含嵌入矩阵。每个配置跑三个随机种子。</span></p>
+  <p><span lang="en">“Wires” are weights, and the counts include the embedding matrices. Three seeds per configuration. The code for every experiment is at <a href="https://github.com/sec4si/sparse-circuits">github.com/sec4si/sparse-circuits</a>.</span><span lang="zh-CN">文中的“连线”就是权重，计数包含嵌入矩阵。每个配置跑三个随机种子。每个实验的代码都在 <a href="https://github.com/sec4si/sparse-circuits">github.com/sec4si/sparse-circuits</a>。</span></p>
 </details>
 <div class="prose">
   <h2><span lang="en">What we found</span><span lang="zh-CN">我们发现了什么</span></h2>
@@ -183,7 +183,7 @@
     <li>Sukhbaatar et al. <a href="https://arxiv.org/abs/2403.07816">“Branch-Train-MiX: Mixing Expert LLMs into a Mixture-of-Experts LLM”</a> (2024).</li>
     <li>Conmy et al. <a href="https://arxiv.org/abs/2304.14997">“Towards Automated Circuit Discovery for Mechanistic Interpretability”</a> (2023).</li>
   </ol>
-  <p class="mono ref-note"><span lang="en">Every chart here is drawn from the experiment’s raw results (data.json, circuits.json); only the weight matrix in figure 2.1 is an illustration. Background on weight-sparse models is in our <a href="/research/methods/#m-sparse">field guide</a>.</span><span lang="zh-CN">本文所有图表都直接读取实验的原始结果（data.json、circuits.json）；只有图 2.1 中的权重矩阵是示意。权重稀疏模型的背景介绍见我们的<a href="/research/methods/#m-sparse">方法全景</a>。</span></p>
+  <p class="mono ref-note"><span lang="en">Every chart here is drawn from the experiment’s raw results (data.json, circuits.json); only the weight matrix in figure 2.1 is an illustration. All code, raw results and checkpoints are open source at <a href="https://github.com/sec4si/sparse-circuits">github.com/sec4si/sparse-circuits</a>, so every number can be checked or rerun. Background on weight-sparse models is in our <a href="/research/methods/#m-sparse">field guide</a>.</span><span lang="zh-CN">本文所有图表都直接读取实验的原始结果（data.json、circuits.json）；只有图 2.1 中的权重矩阵是示意。全部代码、原始结果和模型权重都已开源在 <a href="https://github.com/sec4si/sparse-circuits">github.com/sec4si/sparse-circuits</a>，每个数字都可以核对或重新跑一遍。权重稀疏模型的背景介绍见我们的<a href="/research/methods/#m-sparse">方法全景</a>。</span></p>
 </section>
 </main>
 
