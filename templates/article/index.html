@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<script>let lang; try { lang = localStorage.getItem('lang') } catch {} if (lang ? lang === 'zh' : /^zh\b/i.test(navigator.language || '')) document.documentElement.lang = 'zh-CN'</script>
+<meta name="theme-color" content="#090c09"><meta name="description" content="ARTICLE SUMMARY"><link rel="canonical" href="https://lens.sec4.si/research/SLUG/"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/styles.css"><title>ARTICLE TITLE — Lens</title></head>
+<body><a class="skip" href="#main"><span lang="en">Skip to content</span><span lang="zh-CN">跳到正文</span></a>
+<header class="site-header"><a class="brand" href="https://sec4.si/" aria-label="sec4.si home"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 5v22h7M28 5v22h-7"/><path class="slash" d="m19 6-6 20"/></svg><span>sec4<span class="dot">.</span>si</span></a><span class="project-breadcrumb mono">/ lens</span><nav aria-label="Project navigation"><a href="https://benchmark.sec4.si/">Benchmark</a><a href="https://lens.sec4.si/">Lens</a><a href="/#research" aria-current="page"><span lang="en">Research</span><span lang="zh-CN">研究</span></a><button class="lang-switch mono" type="button" aria-label="Switch language / 切换语言"><span class="en-mark">EN</span> / <span class="zh-mark">中</span></button><a class="repo-link" href="https://github.com/sec4si/lens">GitHub <svg class="arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></a></nav></header>
+
+<main id="main" class="article">
+<header class="article-head">
+  <a class="back mono" href="/#research">← <span lang="en">Research</span><span lang="zh-CN">研究</span></a>
+  <div class="eyebrow mono"><span class="cross" aria-hidden="true"></span> RESEARCH / 2026-00-00</div>
+  <h1><span lang="en">Article title</span><span lang="zh-CN">文章标题</span></h1>
+  <p class="dek"><span lang="en">One or two sentences on the question and the answer.</span><span lang="zh-CN">用一两句话说清楚问题和答案。</span></p>
+  <p class="byline mono">sec4si · <span lang="en">Authors</span><span lang="zh-CN">作者</span></p>
+</header>
+
+<div class="prose">
+  <p><span lang="en">Plain text. Cite like this.</span><span lang="zh-CN">正文。引用这样写。</span><sup><a href="#ref-1">1</a></sup></p>
+  <h2><span lang="en">A section</span><span lang="zh-CN">一个小节</span></h2>
+  <p><span lang="en">Scroll-driven figures go in a scrolly block: one step per figure.</span><span lang="zh-CN">滚动驱动的图放在 scrolly 块里：每一步对应一张图。</span></p>
+</div>
+
+<section class="scrolly-block" data-chapter="1">
+  <div class="scrolly">
+    <div class="steps">
+      <article class="step">
+        <span class="step-no mono">1.1</span>
+        <h3><span lang="en">First step</span><span lang="zh-CN">第一步</span></h3>
+        <p><span lang="en">Text that goes with figure 1.1.</span><span lang="zh-CN">与图 1.1 对应的文字。</span></p>
+      </article>
+      <article class="step">
+        <span class="step-no mono">1.2</span>
+        <h3><span lang="en">Second step</span><span lang="zh-CN">第二步</span></h3>
+        <p><span lang="en">Text that goes with figure 1.2.</span><span lang="zh-CN">与图 1.2 对应的文字。</span></p>
+      </article>
+    </div>
+    <div class="stage">
+      <div class="stage-meta mono"><span class="stage-fig"></span><span lang="en">DATA: GEMMA 2 2B</span><span lang="zh-CN">数据：Gemma 2 2B</span></div>
+      <div class="stage-scenes"></div>
+    </div>
+  </div>
+</section>
+
+<div class="prose">
+  <p><span lang="en">A figure can also stand on its own inside the text.</span><span lang="zh-CN">图也可以单独嵌在正文里。</span></p>
+</div>
+
+<figure class="inline-figure">
+  <div class="stage inline">
+    <div class="stage-meta mono"><span><span lang="en">FIG 2</span><span lang="zh-CN">图 2</span></span><span lang="en">DATA: GEMMA 2 2B</span><span lang="zh-CN">数据：Gemma 2 2B</span></div>
+    <div class="stage-scenes"></div>
+  </div>
+</figure>
+
+<section class="references">
+  <h2><span lang="en">REFERENCES</span><span lang="zh-CN">参考文献</span></h2>
+  <ol>
+    <li id="ref-1">Author. <a href="https://example.com/">“Title”</a> (2026).</li>
+  </ol>
+</section>
+</main>
+
+<footer class="mono"><a class="footer-brand" href="https://sec4.si/">SEC4.SI / SECURITY FOR SI</a><span class="research-labels">INTERPRETABILITY / FEATURES / CIRCUITS</span><div class="footer-links"><a href="https://benchmark.sec4.si/">Benchmark ↗</a><span>© 2026 SEC4SI</span></div><a class="site-address" href="https://lens.sec4.si/">lens.sec4.si</a></footer>
+<script type="module" src="./article.js"></script></body></html>
