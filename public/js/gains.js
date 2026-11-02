@@ -148,13 +148,13 @@ export function discover(scene, caption) {
   const found = svg('g', { class: 'discovery' }, root);
   svg('circle', { r: 6 }, found);
   svg('text', { class: 'fig-note', y: -14, 'text-anchor': 'middle' }, found).textContent = t('a new chess concept', '一个新的棋理');
-  const taught = svg('text', { class: 'fig-note taught', x: 200, y: 262, 'text-anchor': 'middle' }, root);
+  const taught = svg('text', { class: 'fig-note taught', x: 320, y: 222, 'text-anchor': 'middle' }, root);
   taught.textContent = t('taught to grandmasters', '教给了特级大师');
 
   let timer = 0;
   const lines = [
     t('Part of what a model knows, no person knows yet.', '模型知道的东西，有一部分人类还不知道。'),
-    t('DeepMind extracted new chess concepts from AlphaZero and taught them to grandmasters.', 'DeepMind 从 AlphaZero 里提取出新的棋理，教会了特级大师。'),
+    t('DeepMind extracted new chess concepts from AlphaZero and taught them to grandmasters: what only the model knew became shared knowledge.', 'DeepMind 从 AlphaZero 里提取出新的棋理，教会了特级大师：原本只有模型懂的东西，变成了人和模型共同的知识。'),
   ];
   return {
     enter() {
